@@ -1,6 +1,7 @@
 # USB Accelerator
 Run the USB Accelerator to increase your router USB speed to +10% ~ +240%.
-
+![USB Accelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_1.png)
+ 
 ## Description
 In the Asuswrt router, the default settings do not give you the best USB performance, so the USB Accelerator will be help your to get the best USB SMB read and write speed by changing some settings.</br>
 </br>
@@ -31,6 +32,7 @@ Don't forget to press Enter ;)
 
 ## Verify that USB Accelerator is Working
 Open your browser and login to the router, and check the USB icon at the top right have an "Plus", like the screenshot below.
+![USB Accelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_2.png)
 
 
 ## Updating or Remove
