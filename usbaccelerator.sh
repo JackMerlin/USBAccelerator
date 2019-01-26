@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.1.0                     ######
+######                     Version 0.1.1                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
-VERSION="0.1.0"
+VERSION="0.1.1"
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
 COLOR_GREEN='\033[0;32m'
@@ -177,16 +177,24 @@ fi
 }
 
 Download_files () {
+if [ -f "$spath/usbstatus.png" ]; then
 iconlocalmd5="$(md5sum "$spath/usbstatus.png" | awk '{print $1}')"
 iconremotemd5="$(curl -fsL --retry 3 "$GITHUB_DIR/usbstatus.png" | md5sum | awk '{print $1}')"
-if [ "$iconlocalmd5" != "$iconremotemd5" ]; then
-	curl --retry 3 "$GITHUB_DIR/usbstatus.png" -o "$spath/usbstatus.png" && chmod 644 $spath/usbstatus.png
+	if [ "$iconlocalmd5" != "$iconremotemd5" ]; then
+		curl --retry 3 -s "$GITHUB_DIR/usbstatus.png" -o "$spath/usbstatus.png" && chmod 644 $spath/usbstatus.png
+	fi
+else
+	curl --retry 3 -s "$GITHUB_DIR/usbstatus.png" -o "$spath/usbstatus.png" && chmod 644 $spath/usbstatus.png
 fi
 
+if [ -f "$spath/usbaccelerator.sh" ]; then
 localmd5="$(md5sum "$spath/usbaccelerator.sh" | awk '{print $1}')"
 remotemd5="$(curl -fsL --retry 3 "$GITHUB_DIR/usbaccelerator.sh" | md5sum | awk '{print $1}')"
-if [ "$localmd5" != "$remotemd5" ]; then
-	curl --retry 3 "$GITHUB_DIR/usbaccelerator.sh" -o "$spath/usbaccelerator.sh" && chmod 755 $spath/usbaccelerator.sh
+	if [ "$localmd5" != "$remotemd5" ]; then
+		curl --retry 3 -s "$GITHUB_DIR/usbaccelerator.sh" -o "$spath/usbaccelerator.sh" && chmod 755 $spath/usbaccelerator.sh
+	fi
+else
+	curl --retry 3 -s "$GITHUB_DIR/usbaccelerator.sh" -o "$spath/usbaccelerator.sh" && chmod 755 $spath/usbaccelerator.sh
 fi
 }
 
@@ -233,11 +241,11 @@ fi
 }
 
 Remove () {
+umount /www/images/New_ui/usbstatus.png
 rm $spath/smb.postconf
 rm $spath/usbstatus.png
 rm $spath/usbaccelerator.sh
 service restart_nasapps
-umount /www/images/New_ui/usbstatus.png
 if [ "$lang" = "zh" ]; then
 	printf 'USB加速器已经完全卸载，所有一切都恢复到了原始状态\n'
 else
