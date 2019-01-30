@@ -15,7 +15,7 @@ In the Asuswrt router, the default settings do not give you the best USB perform
 4. Automatically check for updates at each run it.
 
 ### If you use Asuswrt stock firmware
-1.Create a `/jffs/scripts/sfsmb` file and this `sfsmb` file will be change `socket options` and `strict locking` settings to increase SMB read and write speed.
+1. Create a `/jffs/scripts/sfsmb` file and this `sfsmb` file will be change `socket options` and `strict locking` settings to increase SMB read and write speed.
 2. Let the `sfsmb` run when you mount the USB device to your router.
 3. Enable USB 3.0 mode, If your router has the USB 3.0 port.
 4. Add an icon to WEB GUI to display the working status.
