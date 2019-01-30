@@ -1,55 +1,71 @@
 # USB Accelerator
-**Run the USB Accelerator to increase your router USB speed to +10% ~ +240%.**</br>
-<img src="https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_1.png" width="611" height="382" />
+**The USB Accelerator can help you increase your router USB speed to +10% ~ +240%.**</br>
+![USBAccelerator](https://i.loli.net/2019/01/30/5c50b5028adf6.png)
  
 ## Description
 In the Asuswrt router, the default settings do not give you the best USB performance, So the USB Accelerator will help you get the best USB SMB read and write speed by changing some settings.</br>
 </br>
 **I didn't know the computer language before, this is my first script, if there have error please forgive me.**
 
-### The USB Accelerator script will
+## The USB Accelerator script will
+### If you use Asuswrt-Merlin firmware or forks
 1. Create a `/jffs/scripts/smb.postconf` file and change `socket options` and `strict locking` settings to increase SMB read and write speed.
-2. Enable USB 3.0 mode, If your router has USB 3.0 port.
-3. Add an icon to WEB GUI to show the USB Accelerator is enabled.
-4. When you running `/jffs/scripts/usbaccelerator.sh` it will automatically check for updates.
+2. Enable USB 3.0 mode, If your router has the USB 3.0 port.
+3. Add an icon to WEB GUI to display the working status.
+4. Automatically check for updates at each run it.
+
+### If you use Asuswrt stock firmware
+1.Create a `/jffs/scripts/sfsmb` file and this `sfsmb` file will be change `socket options` and `strict locking` settings to increase SMB read and write speed.
+2. Let the `sfsmb` run when you mount the USB device to your router.
+3. Enable USB 3.0 mode, If your router has the USB 3.0 port.
+4. Add an icon to WEB GUI to display the working status.
+5. Automatically check for updates at each run it.
 
 ## Requirements
-1. An Asus router with  [Asuswrt-Merlin](https://asuswrt.lostrealm.ca/) firmware installed.
-2. Enable JFFS and custom scripts.
+* An Asus router with  [Asuswrt-Merlin](https://asuswrt.lostrealm.ca/) firmware installed.
+* Enable JFFS and custom scripts.</br>
+or</br>
+* An Asus router with using stock firmware (beta).
 
 ## Supported Models
 * RT-AC66U_B1
 * RT-AC68U
-* RT-AC1900P
+* RT-AC3200
 * RT-AC86U
+* RT-AC88U
+* R6300v2(Running illegal Asuswrt firmware)
+* R7000(Running illegal Asuswrt firmware)
 
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
 ```
 curl --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh && /jffs/scripts/usbaccelerator.sh
 ```
-Don't forget to press Enter ;)
+Don't forget to press Enter key ;)
 
 ## Verify that USB Accelerator is Working
-Open your browser and login to your router, and check the USB icon at the top right have an "Plus", like the screenshot below.</br>
+* Open your browser to login your router, and check the USB icon at the top right have an "Plus", like the screenshot below.</br>
 ![USB Accelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_2.png)
+* Check the system log, the USB Accelerator should report a code, If the code is `10` it means is USB Accelerator enabled successfully.
 
-## Updating or Remove
+## Updating or reinstall or Remove
 Using your SSH client to login to your router, then copy and paste the following command:
 ```
 /jffs/scripts/usbaccelerator.sh
 ```
-If there have an update, it will silently update when you run the script.
+If the update is available, you can see the update options.
+
+## Known issues
+Maybe in the stock firmware is not working, but I'm not sure.
 
 ## Feedback
 You can feedback code error in the Github and help me make it better.
 
 ## FAQs
+### Why is there no speed increase in the FTP?
+It should only work in the SMB protocol. If you are a developer, you can help me make it work in the FTP.
 ### Why is no performance improvement on my router?
-Maybe some settings don't apply to your router, I suggest you do some USB read and write tests before and after running the script.
+First check if it works, and if yes, maybe some settings don't apply to your router.
 
 ### Is it open source?
 One hundred percent, check the [license](https://github.com/JackMerlin/USBAccelerator/blob/master/LICENSE).
-
-## Special thanks
-[@Adamm](https://www.snbforums.com/threads/ac86u-smb-tweaking.44729/) of the SNBForums, he found the key settings.
