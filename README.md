@@ -33,8 +33,6 @@ or</br>
 * RT-AC3200
 * RT-AC86U
 * RT-AC88U
-* R6300v2(Running illegal Asuswrt firmware)
-* R7000(Running illegal Asuswrt firmware)
 
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
