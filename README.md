@@ -53,7 +53,7 @@ Using your SSH client to login to your router, then copy and paste the following
 ```
 If the update is available, you can see the update options.
 
-## Known issues
+## Known Issues
 Maybe in the stock firmware is not working, but I'm not sure.
 
 ## Feedback
@@ -64,6 +64,5 @@ You can feedback code error in the GitHub and help me make it better.
 It should only work in the SMB protocol. If you are a developer, you can help me make it work in the FTP.
 ### Why is no performance improvement on my router?
 First check if it works, and if yes, maybe some settings don't apply to your router.
-
 ### Is it open source?
 One hundred percent, check the [license](https://github.com/JackMerlin/USBAccelerator/blob/master/LICENSE).
