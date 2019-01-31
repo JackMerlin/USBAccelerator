@@ -46,7 +46,7 @@ Don't forget to press Enter key ;)
 ![USB Accelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_2.png)
 * Check the system log, the USB Accelerator should report a code, If the code is `10` it means is USB Accelerator enabled successfully.
 
-## Updating or reinstall or Remove
+## Updating or Reinstall or Remove
 Using your SSH client to login to your router, then copy and paste the following command:
 ```
 /jffs/scripts/usbaccelerator.sh
@@ -57,7 +57,7 @@ If the update is available, you can see the update options.
 Maybe in the stock firmware is not working, but I'm not sure.
 
 ## Feedback
-You can feedback code error in the Github and help me make it better.
+You can feedback code error in the GitHub and help me make it better.
 
 ## FAQs
 ### Why is there no speed increase in the FTP?
