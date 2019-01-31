@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.2.3                     ######
+######                     Version 0.2.4                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -11,7 +11,7 @@
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
 GITHUB_DIR="https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master"
 SPATH="/jffs/scripts"
-VERSION="0.2.3"
+VERSION="0.2.4"
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
 COLOR_GREEN='\033[0;32m'
@@ -40,6 +40,7 @@ esac
 }
 
 Welcome_message_zh () {
+while true; do
 lang="zh"
 printf '\n___________________________________________________________________\n'
 printf '\n'
@@ -98,18 +99,19 @@ break
 5)Thanks_list_zh
 break
 ;;
-9)Remove
+9)Validate_Removal
 break
 ;;
 *)
 printf '请输入正确内容。\n'
-Welcome_message_zh
 break
 ;;
 esac
+done
 }
 
 Welcome_message () {
+while true; do
 lang="en"
 printf '\n___________________________________________________________________\n'
 printf '\n \n'
@@ -168,18 +170,19 @@ break
 5)Thanks_list
 break
 ;;
-9)Remove
+9)Validate_Removal
 break
 ;;
 *)
 printf 'Please enter a valid option.\n'
-Welcome_message
 break
 ;;
 esac
+done
 }
 
 Select_firmware () {
+while true; do
 if [ "$lang" = "zh" ]; then
 	printf '___________________________________________________________________\n'
 	printf '\n'
@@ -193,23 +196,18 @@ if [ "$lang" = "zh" ]; then
 	printf '\n'
 	read -r "menu2"
 	case "$menu2" in
-	1)
-	Enable
+	1)Enable
 	break
 	;;
-	2)
-	printf '此模式处于测试状态，可能效果并不明显。'
+	2)printf '此模式处于测试状态，可能效果并不明显。'
 	SFW_Enable
 	break
 	;;
 	3)
 	printf '不支持其他固件，谢谢。'
-	Select_firmware
 	break
 	;;
-	*)
-	printf '请输入正确内容。\n'
-	Select_firmware
+	*)printf '请输入正确内容。\n'
 	break
 	;;
 	esac
@@ -231,20 +229,66 @@ else
 	n)SFW_Enable
 	break
 	;;
-	*)
-	printf 'Please enter a valid option.\n'
-	Select_firmware
+	*)printf 'Please enter a valid option.\n'
 	break
 	;;
 	esac
 fi
+done
+}
+
+Validate_Removal () {
+while true; do
+	if [ "$lang" = "zh" ]; then
+		printf '___________________________________________________________________\n'
+		printf '你确定卸载USB加速器吗？\n'
+		printf '输入 %by%b 确定卸载。\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+		printf '输入 %bn%b 不卸载。\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+		printf '___________________________________________________________________\n'
+		printf '请输入对应字母\n'
+		printf '\n'
+		read -r "menu9"
+		case "$menu9" in
+		y)Remove
+		break
+		;;
+		n)Welcome_message_zh
+		break
+		;;
+		*)
+		printf '请输入正确内容。\n'
+		break
+		;;
+		esac
+	else
+		printf '___________________________________________________________________\n'
+		printf 'Are you sure to remove the USB Accelerator?\n'
+		printf '%by%b = Yes, I am sure.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+		printf '%bn%b = Cancel.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+		printf '___________________________________________________________________\n'
+		printf 'Please enter\n'
+		printf '\n'
+		read -r "menu9"
+		case "$menu9" in
+		y)Remove
+		break
+		;;
+		n)Welcome_message
+		break
+		;;
+		*)
+		printf 'Please enter a valid option.\n'
+		break
+		;;
+		esac
+	fi
+done
 }
 
 Thanks_list_zh () {
 printf '%b特别感谢：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf ' （排名不分先后）\n'
 printf 'SNBForums的Adamm发现的关键配置\n'
-printf 'Koolshare的sadog协助兼容Asuswrt固件\n'
 printf 'Koolshare对本项目的支持\n'
 printf '52asus对本项目的支持\n'
 printf '\n'
@@ -258,7 +302,6 @@ Thanks_list () {
 printf '%bSpecial thanks%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf 'Names not listed in order\n'
 printf 'Adamm for SNBForums\n'
-printf 'sadog for Koolshare\n'
 printf 'Koolshare for supports the project\n'
 printf '52asus for supports the project\n'
 printf '\n'
@@ -414,7 +457,7 @@ umusb="$(df -h | grep -i 'mnt' | head -n 1 | cut -f 6 -d'/')"
 			esac
 		else
 			printf '___________________________________________________________________\n'
-			echo "Maybe $(df -h | grep -i 'mnt' | cut -f 6 -d'/' | tr '\n' ' ')device is busy, please manually unmount in the WEB GUI."
+			echo "Maybe $(df -h | grep -i 'mnt' | cut -f 6 -d'/' | tr '\n' ' ') device is busy, please manually unmount in the WEB GUI."
 			printf '___________________________________________________________________\n'
 			printf 'Please manually unmount your USB devices and press any key to continue\n'
 			read -r "menu4"
@@ -544,7 +587,6 @@ if [ "$SMB" != "1" ]; then
 else
 	End_Message
 fi
-
 }
 
 Enable_logs () {
