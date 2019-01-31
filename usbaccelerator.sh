@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.2.5                     ######
+######                     Version 0.2.6                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -11,7 +11,7 @@
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
 GITHUB_DIR="https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master"
 SPATH="/jffs/scripts"
-VERSION="0.2.5"
+VERSION="0.2.6"
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
 COLOR_GREEN='\033[0;32m'
@@ -602,7 +602,7 @@ fi
 Enable_logs () {
 if [ "$Enable_Message" != "1" ]; then
 	if [ "$lang" = "zh" ]; then
-		echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep 'strict locking' /etc/smb.conf | wc -l)$('socket options' /etc/smb.conf | wc -l) 。"' >> $SPATH/sfsmb
+		echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep 'strict locking' /etc/smb.conf | wc -l)$(grep 'socket options' /etc/smb.conf | wc -l) 。"' >> $SPATH/sfsmb
 	else
 		echo 'logger -t "USB Accelerator" "The USB Accelerator has started, code $(grep 'strict locking' /etc/smb.conf | wc -l)$(grep 'socket options' /etc/smb.conf | wc -l)."' >> $SPATH/sfsmb
 	fi
