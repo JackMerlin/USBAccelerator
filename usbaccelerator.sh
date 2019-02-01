@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.2.6                     ######
+######                     Version 0.2.7                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -11,7 +11,7 @@
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
 GITHUB_DIR="https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master"
 SPATH="/jffs/scripts"
-VERSION="0.2.6"
+VERSION="0.2.7"
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
 COLOR_GREEN='\033[0;32m'
@@ -59,7 +59,7 @@ printf '(c)2019 USB加速器由Jack制作，保留所有权利，使用GPLv3授�
 printf '如果你尊重GPLv3授权，你可以自由地使用它。\n'
 printf '源码在 https://github.com/JackMerlin/USBAccelerator\n'
 printf '___________________________________________________________________\n'
-CheckEnable="$(grep -i 'USB_Accelerator' /etc/smb.conf | wc -l)"
+CheckEnable="$(grep -c 'USB_Accelerator' /etc/smb.conf)"
 if [ "$CheckEnable" != "1" ]; then
 	printf '输入 %b1%b 开启%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 else
@@ -71,7 +71,7 @@ if [ "$localmd5" != "$remotemd5" ]; then
 	printf '输入 %b3%b 更新%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 if [ "$CheckEnable" = "1" ]; then
-	printf '输入 %b4%b 重装%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	printf '输入 %b4%b 重装%bUSB加速器（建议每次升级后重装）\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 	printf '输入 %b5%b 查看%b致谢名单\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 	printf '输入 %b9%b 卸载%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -134,7 +134,7 @@ printf '(c)2019 USB Accelerator by Jack, Use the GPLv3 license.\n'
 printf 'You can find the source code or feedback below\n'
 printf 'https://github.com/JackMerlin/USBAccelerator\n'
 printf '___________________________________________________________________\n'
-CheckEnable="$(grep 'USB_Accelerator' /etc/smb.conf | wc -l)"
+CheckEnable="$(grep -c 'USB_Accelerator' /etc/smb.conf)"
 if [ "$CheckEnable" != "1" ]; then
 	printf 'Enter %b1%b to %bEnable%b the USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 else
@@ -442,6 +442,20 @@ if [ "$(df -h | grep -c 'mnt')" -ge "1" ]; then
 fi
 }
 
+Umount_message_2 () {
+if [ "$(df -h | grep -c 'mnt')" -ge "1" ]; then
+	if [ "$lang" = "zh" ]; then
+		printf '___________________________________________________________________\n'
+		printf '安装完成前请不要读写USB。\n'
+		printf '___________________________________________________________________\n'
+	else
+		printf '___________________________________________________________________\n'
+		printf 'For data security, do not read or write any data to router USB devices before the installation is done.\n'
+		printf '___________________________________________________________________\n'
+	fi
+fi
+}
+
 Umount_usb_file () {
 echo "$(df -h | grep -i 'mnt')" > /tmp/Umountusblist
 Umount_usb 
@@ -522,9 +536,9 @@ fi
 Enable () {
 Check_folder
 Check_usbmode
-SMB="$(grep 'USB_Accelerator' /etc/smb.conf | wc -l)"
+SMB="$(grep -c 'USB_Accelerator' /etc/smb.conf)"
 if [ "$SMB" != "1" ]; then
-#	Umount_message
+#	Umount_message_2
 	echo '#!/bin/sh' > $SPATH/smb.postconf
 	echo 'CONFIG="$1"' >> $SPATH/smb.postconf
 	echo 'sed -i "\~socket options~d" "$CONFIG"' >> $SPATH/smb.postconf
@@ -540,7 +554,7 @@ if [ "$SMB" != "1" ]; then
 	chmod 755 $SPATH/smb.postconf
 	service restart_nasapps
 #	Mount_usb
-	Enable_Message="1"
+	SMB_Conf="smb.postconf"
 	Enable_logs
 else
 	End_Message
@@ -550,37 +564,43 @@ fi
 SFW_Enable () {
 Check_folder
 Check_usbmode
-SMB="$(grep 'USB_Accelerator' /etc/smb.conf | wc -l)"
+SMB="$(grep -c 'USB_Accelerator' /etc/smb.conf)"
 if [ "$SMB" != "1" ]; then
-	Umount_message
+	Umount_message_2
+	killall -s SIGHUP smbd 2>/dev/null
+	killall -s SIGHUP smbd 2>/dev/null
+	killall -s SIGHUP nmbd 2>/dev/null
+	killall -s SIGHUP nmbd 2>/dev/null
+#	killall -s SIGHUP nas 2>/dev/null
+	sleep 1
 	sed -i "\~socket options~d" /etc/smb.conf
 	echo "strict locking = no" >> /etc/smb.conf
 	echo "#USB_Accelerator" >> /etc/smb.conf
-	killall nmbd 2>/dev/null
-	killall nmbd 2>/dev/null
-	killall smbd 2>/dev/null
-	killall nas 2>/dev/null
-	nmbd -D -s /etc/smb.conf 2>/dev/null
-	nmbd -D -s /etc/smb.conf 2>/dev/null
 	/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
-	nas 2>/dev/null
-	Mount_usb
+	/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
+	nmbd -D -s /etc/smb.conf 2>/dev/null
+	nmbd -D -s /etc/smb.conf 2>/dev/null
+#	nas 2>/dev/null
+#	Mount_usb
 	mount --bind /jffs/scripts/usbstatus.png /www/images/New_ui/usbstatus.png
 	sleep 1
 	echo '#!/bin/sh' > $SPATH/sfsmb
-	echo 'sleep 20' >> $SPATH/sfsmb
-	echo 'if [ "$(grep -i USB_Accelerator /etc/smb.conf | wc -l)" != "1" ]; then' >> $SPATH/sfsmb
+	echo 'sleep 1' >> $SPATH/sfsmb
+	echo 'if [ "$(grep -c "USB_Accelerator" /etc/smb.conf)" != "1" ]; then' >> $SPATH/sfsmb
+	echo 'killall -s SIGHUP smbd 2>/dev/null' >> $SPATH/sfsmb
+	echo 'killall -s SIGHUP smbd 2>/dev/null' >> $SPATH/sfsmb
+	echo 'killall -s SIGHUP nmbd 2>/dev/null' >> $SPATH/sfsmb
+	echo 'killall -s SIGHUP nmbd 2>/dev/null' >> $SPATH/sfsmb
+#	echo 'killall -s SIGHUP nas 2>/dev/null' >> $SPATH/sfsmb
 	echo 'sed -i "\~socket options~d" /etc/smb.conf' >> $SPATH/sfsmb
 	echo 'echo "strict locking = no" >> /etc/smb.conf' >> $SPATH/sfsmb
 	echo 'echo "#USB_Accelerator" >> /etc/smb.conf' >> $SPATH/sfsmb
-	echo 'killall nmbd 2>/dev/null' >> $SPATH/sfsmb
-	echo 'killall nmbd 2>/dev/null' >> $SPATH/sfsmb
-	echo 'killall smbd 2>/dev/null' >> $SPATH/sfsmb
-	echo 'killall nas 2>/dev/null' >> $SPATH/sfsmb
-	echo 'nmbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
-	echo 'nmbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
+	echo 'sleep 1' >> $SPATH/sfsmb
 	echo '/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
-	echo 'nas 2>/dev/null' >> $SPATH/sfsmb
+	echo '/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
+	echo 'nmbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
+	echo 'nmbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb	
+#	echo 'nas 2>/dev/null' >> $SPATH/sfsmb
 	echo 'fi' >> $SPATH/sfsmb
 	echo 'mount --bind /jffs/scripts/usbstatus.png /www/images/New_ui/usbstatus.png' >> $SPATH/sfsmb
 	echo 'sleep 10' >> $SPATH/sfsmb
@@ -592,7 +612,7 @@ if [ "$SMB" != "1" ]; then
 	chmod 755 $SPATH/sfsmb
 	nvram set script_usbmount="/jffs/scripts/sfsmb"
 	nvram commit
-	Enable_Message="0"
+	SMB_Conf="sfsmb"
 	Enable_logs
 else
 	End_Message
@@ -600,19 +620,11 @@ fi
 }
 
 Enable_logs () {
-if [ "$Enable_Message" != "1" ]; then
 	if [ "$lang" = "zh" ]; then
-		echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep 'strict locking' /etc/smb.conf | wc -l)$(grep 'socket options' /etc/smb.conf | wc -l) 。"' >> $SPATH/sfsmb
+		echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep "strict locking" /etc/smb.conf | wc -l)$(grep "socket options" /etc/smb.conf | wc -l)。"' >> $SPATH/$SMB_Conf
 	else
-		echo 'logger -t "USB Accelerator" "The USB Accelerator has started, code $(grep 'strict locking' /etc/smb.conf | wc -l)$(grep 'socket options' /etc/smb.conf | wc -l)."' >> $SPATH/sfsmb
+		echo 'logger -t "USB Accelerator" "The USB Accelerator has started, code $(grep "strict locking" /etc/smb.conf | wc -l)$(grep "socket options" /etc/smb.conf | wc -l)."' >> $SPATH/$SMB_Conf
 	fi
-else
-	if [ "$lang" = "zh" ]; then
-		echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep 'strict locking' /etc/smb.conf | wc -l)$(grep 'socket options' /etc/smb.conf | wc -l) 。"' >> $SPATH/smb.postconf
-	else
-		echo 'logger -t "USB Accelerator" "The USB Accelerator has started, code $(grep 'strict locking' /etc/smb.conf | wc -l)$(grep 'socket options' /etc/smb.conf | wc -l)."' >> $SPATH/smb.postconf
-	fi
-fi
 End_Message
 }
 
