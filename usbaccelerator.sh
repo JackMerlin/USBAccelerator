@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.2.7                     ######
+######                     Version 0.2.8                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -11,7 +11,7 @@
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
 GITHUB_DIR="https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master"
 SPATH="/jffs/scripts"
-VERSION="0.2.7"
+VERSION="0.2.8"
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
 COLOR_GREEN='\033[0;32m'
@@ -71,7 +71,7 @@ if [ "$localmd5" != "$remotemd5" ]; then
 	printf '输入 %b3%b 更新%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 if [ "$CheckEnable" = "1" ]; then
-	printf '输入 %b4%b 重装%bUSB加速器（建议每次升级后重装）\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	printf '输入 %b4%b 重装%bUSB加速器（建议每次更新后重装）\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 	printf '输入 %b5%b 查看%b致谢名单\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 	printf '输入 %b9%b 卸载%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -294,19 +294,29 @@ done
 }
 
 Thanks_list_zh () {
+printf '___________________________________________________________________\n'
 printf '%b特别感谢：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf ' （排名不分先后）\n'
+printf '（排名不分先后）\n'
 printf 'SNBForums的Adamm发现的关键配置\n'
 printf 'Koolshare对本项目的支持\n'
 printf '52asus对本项目的支持\n'
 printf '\n'
 printf '%b没有以下测试人员抽出宝贵时间去测试，就没有这个脚本，感谢他们：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf ' （排名不分先后）\n'
+printf '（排名不分先后）\n'
 printf 'nyanmisaka、qiutian128、iphone8、pmc_griffon、tzh5278、samsul、特纳西特基欧、dbslsy、ricky1992、awee和Master等人\n'
-Welcome_message_zh
+printf '___________________________________________________________________\n'
+printf '按任意键继续\n'
+printf '\n'
+read -r "menu5"
+case "$menu5" in
+	*)Welcome_message_zh
+	break
+	;;
+esac
 }
 
 Thanks_list () {
+printf '___________________________________________________________________\n'
 printf '%bSpecial thanks%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf 'Names not listed in order\n'
 printf 'Adamm for SNBForums\n'
@@ -316,7 +326,14 @@ printf '\n'
 printf '%bThanks also to the following testers%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf 'Names not listed in order\n'
 printf 'nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul, 特纳西特基欧, dbslsy, ricky1992, awee, Master and others.\n'
-Welcome_message
+printf '___________________________________________________________________\n'
+printf 'Enter any key to continue\n'
+read -r "menu5"
+case "$menu5" in
+	*)Welcome_message
+	break
+	;;
+esac
 }
 
 Error_344_zh () {
@@ -568,18 +585,18 @@ SMB="$(grep -c 'USB_Accelerator' /etc/smb.conf)"
 if [ "$SMB" != "1" ]; then
 	Umount_message_2
 	killall -s SIGHUP smbd 2>/dev/null
-	killall -s SIGHUP smbd 2>/dev/null
+#	killall -s SIGHUP smbd 2>/dev/null
 	killall -s SIGHUP nmbd 2>/dev/null
-	killall -s SIGHUP nmbd 2>/dev/null
+#	killall -s SIGHUP nmbd 2>/dev/null
 #	killall -s SIGHUP nas 2>/dev/null
 	sleep 1
 	sed -i "\~socket options~d" /etc/smb.conf
 	echo "strict locking = no" >> /etc/smb.conf
 	echo "#USB_Accelerator" >> /etc/smb.conf
 	/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
-	/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
+#	/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
 	nmbd -D -s /etc/smb.conf 2>/dev/null
-	nmbd -D -s /etc/smb.conf 2>/dev/null
+#	nmbd -D -s /etc/smb.conf 2>/dev/null
 #	nas 2>/dev/null
 #	Mount_usb
 	mount --bind /jffs/scripts/usbstatus.png /www/images/New_ui/usbstatus.png
@@ -620,45 +637,33 @@ fi
 }
 
 Enable_logs () {
-	if [ "$lang" = "zh" ]; then
-		echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep "strict locking" /etc/smb.conf | wc -l)$(grep "socket options" /etc/smb.conf | wc -l)。"' >> $SPATH/$SMB_Conf
-	else
-		echo 'logger -t "USB Accelerator" "The USB Accelerator has started, code $(grep "strict locking" /etc/smb.conf | wc -l)$(grep "socket options" /etc/smb.conf | wc -l)."' >> $SPATH/$SMB_Conf
-	fi
+if [ "$lang" = "zh" ]; then
+	echo 'logger -t "USB加速器" "USB加速器已经启动，代码 $(grep "strict locking" /etc/smb.conf | wc -l)$(grep "socket options" /etc/smb.conf | wc -l)。"' >> $SPATH/$SMB_Conf
+else
+	echo 'logger -t "USB Accelerator" "The USB Accelerator has started, code $(grep "strict locking" /etc/smb.conf | wc -l)$(grep "socket options" /etc/smb.conf | wc -l)."' >> $SPATH/$SMB_Conf
+fi
 End_Message
 }
 
 End_Message () {
-if [ "$USBON" != "1" ]; then
-	if [ "$lang" = "zh" ]; then
-		printf '___________________________________________________________________\n'
-		printf '已经开启USB加速器！\n'
-		printf '如果你需要管理USB加速器，则在SSH中输入下方代码\n'
-		printf '%b/jffs/scripts/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
-		printf '___________________________________________________________________\n'
-	else
-		printf '___________________________________________________________________\n'
-		printf 'The USB Accelerator is enabled!\n'
-		printf 'If you want to set the USB Accelerator, Please enter the code below\n'
-		printf '%b/jffs/scripts/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
-		printf '___________________________________________________________________\n'
-	fi
+if [ "$lang" = "zh" ]; then
+	printf '___________________________________________________________________\n'
+	printf '已经开启USB加速器！\n'
+	printf '如果你需要管理USB加速器，则在SSH中输入下方代码\n'
+		if [ "$USBON" = "1" ]; then
+			printf '你可能需要重新启动才能达到最佳速度。\n'
+		fi
+	printf '%b/jffs/scripts/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	printf '___________________________________________________________________\n'
 else
-	if [ "$lang" = "zh" ]; then
-		printf '___________________________________________________________________\n'
-		printf '已经开启USB加速器！\n'
-		printf '你可能需要重新启动才能达到最佳速度。\n'
-		printf '如果你需要管理USB加速器，则在SSH中输入下方代码\n'
-		printf '%b/jffs/scripts/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
-		printf '___________________________________________________________________\n'
-	else
-		printf '___________________________________________________________________\n'
-		printf 'The USB Accelerator is enabled!\n'
-		printf 'For get the best speed, you may need to reboot the router.\n'
-		printf 'If you want to set the USB Accelerator, Please enter the code below\n'
-		printf '%b/jffs/scripts/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
-		printf '___________________________________________________________________\n'
-	fi
+	printf '___________________________________________________________________\n'
+	printf 'The USB Accelerator is enabled!\n'
+	printf 'If you want to set the USB Accelerator, Please enter the code below\n'
+		if [ "$USBON" = "1" ]; then
+			printf 'For get the best speed, you may need to reboot the router.\n'
+		fi
+	printf '%b/jffs/scripts/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	printf '___________________________________________________________________\n'
 fi
 }
 
