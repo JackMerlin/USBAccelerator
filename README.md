@@ -37,7 +37,7 @@ or</br>
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
 ```Shell
-/usr/sbin/curl --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh && /jffs/scripts/usbaccelerator.sh
+/usr/sbin/curl --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh && sh /jffs/scripts/usbaccelerator.sh
 ```
 Don't forget to press Enter key ;)
 
