@@ -563,9 +563,9 @@ if [ "$SMB" = "0" ]; then
 	echo 'mount --bind /jffs/scripts/usbstatus.png /www/images/New_ui/usbstatus.png' >> $SPATH/smb.postconf
 	echo 'sleep 10' >> $SPATH/smb.postconf
 	echo 'localmd5="$(md5sum "/jffs/scripts/usbaccelerator.sh" | awk "{print $1}")"' >> $SPATH/smb.postconf
-	echo 'remotemd5="$(curl -fsL --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" | md5sum | awk "{print $1}")"' >> $SPATH/smb.postconf
+	echo 'remotemd5="$(/usr/sbin/curl -fsL --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" | md5sum | awk "{print $1}")"' >> $SPATH/smb.postconf
 	echo 'if [ "$localmd5" != "$remotemd5" ]; then' >> $SPATH/smb.postconf
-	echo 'curl --retry 3 -s "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh' >> $SPATH/smb.postconf
+	echo '/usr/sbin/curl --retry 3 -s "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh' >> $SPATH/smb.postconf
 	echo 'fi' >> $SPATH/smb.postconf
 	chmod 755 $SPATH/smb.postconf
 	service restart_nasapps
