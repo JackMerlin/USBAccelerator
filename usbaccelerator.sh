@@ -91,7 +91,7 @@ break
 break
 ;;
 3)Check_folder
-Welcome_message_zh
+$SPATH/usbaccelerator.sh
 break
 ;;
 4)Reinstall
@@ -166,7 +166,7 @@ break
 break
 ;;
 3)Check_folder 
-Welcome_message
+$SPATH/usbaccelerator.sh
 break
 ;;
 4)Reinstall
