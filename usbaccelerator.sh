@@ -609,13 +609,13 @@ if [ "$SMB" = "0" ]; then
 	echo '/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
 	echo 'nmbd -D -s /etc/smb.conf 2>/dev/null' >> $SPATH/sfsmb
 #	echo 'nas 2>/dev/null' >> $SPATH/sfsmb
-	echo 'fi' >> $SPATH/sfsmb
 	echo 'mount --bind /jffs/scripts/usbstatus.png /www/images/New_ui/usbstatus.png' >> $SPATH/sfsmb
+	echo 'fi' >> $SPATH/sfsmb
 	echo 'sleep 10' >> $SPATH/sfsmb
 	echo 'localmd5="$(md5sum "/jffs/scripts/usbaccelerator.sh" | awk "{print $1}")"' >> $SPATH/sfsmb
-	echo 'remotemd5="$(curl -fsL --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" | md5sum | awk "{print $1}")"' >> $SPATH/sfsmb
+	echo 'remotemd5="$(/usr/sbin/curl -fsL --retry 3 "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" | md5sum | awk "{print $1}")"' >> $SPATH/sfsmb
 	echo 'if [ "$localmd5" != "$remotemd5" ]; then' >> $SPATH/sfsmb
-	echo 'curl --retry 3 -s "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh' >> $SPATH/sfsmb
+	echo '/usr/sbin/curl --retry 3 -s "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -o "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh' >> $SPATH/sfsmb
 	echo 'fi' >> $SPATH/sfsmb
 	chmod 755 $SPATH/sfsmb
 	nvram set script_usbmount="/jffs/scripts/sfsmb"
