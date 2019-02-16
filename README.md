@@ -37,7 +37,7 @@ or</br>
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
 ```Shell
-/usr/sbin/wget -c -T 30 --no-check-certificate "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -O "/jffs/scripts/usbaccelerator.sh" && chmod 755 /jffs/scripts/usbaccelerator.sh && sh /jffs/scripts/usbaccelerator.sh
+/usr/sbin/wget -c -T 30 --no-check-certificate "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -O "/tmp/usbaccelerator.sh" && chmod 755 /tmp/usbaccelerator.sh && sh /tmp/usbaccelerator.sh
 ```
 Don't forget to press Enter key ;)
 
