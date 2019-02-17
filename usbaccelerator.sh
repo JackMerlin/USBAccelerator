@@ -367,7 +367,7 @@ iconremotemd5="$(wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbstatus.
 		rm -f /tmp/usbstatus.check 2>/dev/null
 	fi
 else
-	mv -f /tmp/usbstatus.check $SPATH/usbstatus.png 2>/dev/null && chmod 644 $SPATH/usbstatus.png 2>/dev/null
+	wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbstatus.png" -O "$SPATH/usbstatus.png" && chmod 644 $SPATH/usbstatus.png
 fi
 
 if [ -f "$SPATH/usbaccelerator.sh" ]; then
@@ -379,7 +379,7 @@ remotemd5="$(wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator
 		rm -f /tmp/usbaccelerator.check 2>/dev/null
 	fi
 else
-	mv -f /tmp/usbaccelerator.check $SPATH/usbaccelerator.sh 2>/dev/null && chmod 755 $SPATH/usbaccelerator.sh 2>/dev/null
+	wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator.sh" -O "$SPATH/usbaccelerator.sh" && chmod 755 $SPATH/usbaccelerator.sh
 fi
 }
 
