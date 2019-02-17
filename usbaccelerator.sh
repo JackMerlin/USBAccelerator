@@ -2,16 +2,16 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.3.0                     ######
+######                     Version 0.3.1                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
-VERSION='0.3.0'
-GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
+VERSION='0.3.1'
 SPATH='/jffs/scripts'
+GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
 COLOR_GREEN='\033[0;32m'
@@ -40,6 +40,7 @@ esac
 }
 
 Welcome_message_zh () {
+Check_folder
 while true; do
 lang="zh"
 printf '\n___________________________________________________________________\n'
@@ -92,14 +93,14 @@ break
 ;;
 e)exit 0
 ;;
-*)
-printf '\n请输入正确内容。\n'
+*)printf '\n请输入正确内容。\n'
 ;;
 esac
 done
 }
 
 Welcome_message () {
+Check_folder
 while true; do
 lang="en"
 printf '\n___________________________________________________________________\n'
@@ -152,8 +153,7 @@ break
 ;;
 e)exit 0
 ;;
-*)
-printf '\nPlease enter a valid option.\n'
+*)printf '\nPlease enter a valid option.\n'
 ;;
 esac
 done
@@ -308,11 +308,11 @@ printf '\n___________________________________________________________________\n'
 printf '你的路由器即将在5秒后爆炸，请享受这个烟火表演。\n'
 printf '\n'
 sleep 1
-printf '5\n'
+printf '  5\n'
 sleep 1
-printf '4\n'
+printf '  4\n'
 sleep 1
-printf '3\n'
+printf '  3\n'
 sleep 5
 printf '___________________________________________________________________\n'
 printf '糟糕，代码错误，引爆失败，请向作者报告这个错误。\n'
@@ -328,11 +328,11 @@ printf '\n___________________________________________________________________\n'
 printf 'Your router will be auto self-destruct, please enjoy a bricked router.\n'
 printf '\n'
 sleep 1
-printf '5\n'
+printf '  5\n'
 sleep 1
-printf '4\n'
+printf '  4\n'
 sleep 1
-printf '3\n'
+printf '  3\n'
 sleep 5
 printf '___________________________________________________________________\n'
 printf 'Error, please feedback this error code 344 to developers,\n'
@@ -351,8 +351,8 @@ Check_folder () {
 if [ -d "$SPATH" ]; then
 	Download_files
 else
-	mkdir $SPATH
-	chmod 755 $SPATH
+	mkdir $SPATH 2>/dev/null
+	chmod 755 $SPATH 2>/dev/null
 	Download_files
 fi
 }
@@ -360,22 +360,26 @@ fi
 Download_files () {
 if [ -f "$SPATH/usbstatus.png" ]; then
 iconlocalmd5="$(md5sum "$SPATH/usbstatus.png" | awk '{print $1}')"
-iconremotemd5="$(wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbstatus.png" -O /tmp/usbstatus.check && md5sum /tmp/usbstatus.check | awk '{print $1}' && rm /tmp/usbstatus.check)"
+iconremotemd5="$(wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbstatus.png" -O /tmp/usbstatus.check && md5sum /tmp/usbstatus.check | awk '{print $1}')"
 	if [ "$iconlocalmd5" != "$iconremotemd5" ]; then
-		rm $SPATH/usbstatus.png && wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbstatus.png" -O "$SPATH/usbstatus.png" && chmod 644 $SPATH/usbstatus.png
+		mv -f /tmp/usbstatus.check $SPATH/usbstatus.png 2>/dev/null && chmod 644 $SPATH/usbstatus.png 2>/dev/null
+	else
+		rm -f /tmp/usbstatus.check 2>/dev/null
 	fi
 else
-	wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbstatus.png" -O "$SPATH/usbstatus.png" && chmod 644 $SPATH/usbstatus.png
+	mv -f /tmp/usbstatus.check $SPATH/usbstatus.png 2>/dev/null && chmod 644 $SPATH/usbstatus.png 2>/dev/null
 fi
 
 if [ -f "$SPATH/usbaccelerator.sh" ]; then
 localmd5="$(md5sum "$SPATH/usbaccelerator.sh" | awk '{print $1}')"
-remotemd5="$(wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator.sh" -O /tmp/usbaccelerator.check && md5sum /tmp/usbaccelerator.check | awk '{print $1}' && rm /tmp/usbaccelerator.check)"
+remotemd5="$(wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator.sh" -O /tmp/usbaccelerator.check && md5sum /tmp/usbaccelerator.check | awk '{print $1}')"
 	if [ "$localmd5" != "$remotemd5" ]; then
-		rm $SPATH/usbaccelerator.sh && wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator.sh" -O "$SPATH/usbaccelerator.sh" && chmod 755 $SPATH/usbaccelerator.sh
+		mv -f /tmp/usbaccelerator.check $SPATH/usbaccelerator.sh 2>/dev/null && chmod 755 $SPATH/usbaccelerator.sh 2>/dev/null
+	else
+		rm -f /tmp/usbaccelerator.check 2>/dev/null
 	fi
 else
-	wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator.sh" -O "$SPATH/usbaccelerator.sh" && chmod 755 $SPATH/usbaccelerator.sh
+	mv -f /tmp/usbaccelerator.check $SPATH/usbaccelerator.sh 2>/dev/null && chmod 755 $SPATH/usbaccelerator.sh 2>/dev/null
 fi
 }
 
@@ -383,7 +387,7 @@ Check_usbmode () {
 USB3="$(nvram show 2>/dev/null | grep 'usb_usb3' | wc -l)"
 if [ "$USB3" = "1" ]; then
 	if [ "$(nvram show 2>/dev/null | grep 'usb_usb3=1')" != "usb_usb3=1" ]; then
-		nvram set usb_usb3=1
+		nvram set usb_usb3="1"
 		nvram commit
 		USBON="1"
 			if [ "$lang" = "zh" ]; then
@@ -421,7 +425,6 @@ fi
 }
 
 Enable () {
-Check_folder
 Check_usbmode
 if [ "$CheckEnable" = "0" ]; then
 	if [ -f "$SPATH/smb.postconf" ]; then
@@ -450,7 +453,6 @@ fi
 }
 
 SFW_Enable () {
-Check_folder
 if [ "$User" = "1" ]; then
 	Umount_message
 	Check_usbmode
@@ -560,7 +562,7 @@ Download_files
 if [ "$lang" = "zh" ]; then
 	printf '\nUSB加速器已经重新安装。\n'
 else
-	printf '\nThe USB Accelerator has been re-install now.\n'
+	printf '\nUSB Accelerator has been re-install now.\n'
 fi
 $SPATH/usbaccelerator.sh
 }
@@ -581,23 +583,23 @@ fi
 rm -f $SPATH/usbaccelerator.sh 2>/dev/null
 }
 
-CheckEnable=0
+CheckEnable="0"
 if [ -f "$SPATH/smb.postconf" ]; then
 	if [ "$(grep 'USB_Accelerator_v' $SPATH/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
 		Enable
-		CheckEnable=1
+		CheckEnable="1"
 	else
-		CheckEnable=1
+		CheckEnable="1"
 	fi
 fi
 
 if [ -f "$SPATH/sfsmb" ]; then
 	if [ "$(grep 'USB_Accelerator_v' $SPATH/sfsmb 2>/dev/null | wc -l)" = "0" ]; then
-		User=1
+		User="1"
 		SFW_Enable
-		CheckEnable=1
+		CheckEnable="1"
 	else
-		CheckEnable=1
+		CheckEnable="1"
 	fi
 fi
 
