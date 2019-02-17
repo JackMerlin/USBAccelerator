@@ -612,5 +612,4 @@ case "$1" in
 -DL)Enable_logs
 ;;
 *)Select_language
-;;
 esac
