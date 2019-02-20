@@ -597,6 +597,7 @@ rm -f $SPATH/usbaccelerator.sh 2>/dev/null
 CheckEnable="0"
 if [ -f "$SPATH/smb.postconf" ]; then
 	if [ "$(grep USB_Accelerator_v$VERSION $SPATH/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
+		Check_folder
 		Enable
 		CheckEnable="1"
 	else
@@ -606,6 +607,7 @@ fi
 
 if [ -f "$SPATH/sfsmb" ]; then
 	if [ "$(grep USB_Accelerator_v$VERSION $SPATH/sfsmb 2>/dev/null | wc -l)" = "0" ]; then
+		Check_folder
 		User="1"
 		SFW_Enable
 		CheckEnable="1"
