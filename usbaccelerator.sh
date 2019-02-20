@@ -261,7 +261,7 @@ done
 }
 
 Thanks_list () {
-Names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul, 特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119, 全池泼洒'
+Names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul, 特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119, 全池泼洒, glk17, luoyulong, kimhai, xiaole51'
 if [ "$lang" = "zh" ]; then
 printf '\n___________________________________________________________________\n'
 printf '%b特别感谢：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
@@ -473,8 +473,8 @@ if [ "$User" = "1" ]; then
 	else
 		echo '#!/bin/sh' > /jffs/post-mount
 		echo "$SPATH/sfsmb" >> /jffs/post-mount
+		chmod 755 /jffs/post-mount
 	fi
-	chmod 755 /jffs/post-mount
 	nvram set script_usbmount="/jffs/post-mount"
 	nvram commit
 fi
