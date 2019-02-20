@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.3.1                     ######
+######                     Version 0.3.2                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
-VERSION='0.3.1'
+VERSION='0.3.2'
 SPATH='/jffs/scripts'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
 COLOR_WHITE='\033[0m'
@@ -220,8 +220,8 @@ if [ "$lang" = "zh" ]; then
 printf '\n___________________________________________________________________\n'
 printf '你确定卸载USB加速器吗？\n'
 printf '\n'
-printf '输入 %by%b 确定卸载。\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf '输入 %bn%b 不卸载。\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+printf '输入 %by%b 确定卸载\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+printf '输入 %bn%b 不卸载\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '___________________________________________________________________\n'
 printf '请输入对应字母\n'
 printf '\n'
@@ -240,8 +240,8 @@ else
 printf '\n___________________________________________________________________\n'
 printf 'Are you sure to remove USB Accelerator?\n'
 printf '\n'
-printf '%by%b = Yes, I am sure.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf '%bn%b = Cancel.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+printf '%by%b = Yes, I am sure\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+printf '%bn%b = Cancel\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '___________________________________________________________________\n'
 printf 'Please enter\n'
 printf '\n'
@@ -426,26 +426,24 @@ fi
 
 Enable () {
 Check_usbmode
-if [ "$CheckEnable" = "0" ]; then
-	if [ -f "$SPATH/smb.postconf" ]; then
-		cp -f $SPATH/smb.postconf $SPATH/smb.postconf.old
-	fi
-	echo '#!/bin/sh' > $SPATH/smb.postconf
-	echo "#USB_Accelerator_v$VERSION" >> $SPATH/smb.postconf
-	echo 'CONFIG="$1"' >> $SPATH/smb.postconf
-	echo 'sed -i "\\~socket options~d" "$CONFIG"' >> $SPATH/smb.postconf
-	echo 'echo "strict locking = no" >> "$CONFIG"' >> $SPATH/smb.postconf
-	echo 'echo "#USB_Accelerator" >> "$CONFIG"' >> $SPATH/smb.postconf
-	if [ "$lang" = "zh" ]; then
-		echo "$SPATH/usbaccelerator.sh -DLZ" >> $SPATH/smb.postconf
-	else
-		echo "$SPATH/usbaccelerator.sh -DL" >> $SPATH/smb.postconf
-	fi
-	echo 'sleep 10' >> $SPATH/smb.postconf
-	echo "$SPATH/usbaccelerator.sh -Check"  >> $SPATH/smb.postconf
-	chmod 755 $SPATH/smb.postconf
-	service restart_nasapps >/dev/null 2>&1
+if [ -f "$SPATH/smb.postconf" ]; then
+	cp -f $SPATH/smb.postconf $SPATH/smb.postconf.old
 fi
+echo '#!/bin/sh' > $SPATH/smb.postconf
+echo "#USB_Accelerator_v$VERSION" >> $SPATH/smb.postconf
+echo 'CONFIG="$1"' >> $SPATH/smb.postconf
+echo 'sed -i "\\~socket options~d" "$CONFIG"' >> $SPATH/smb.postconf
+echo 'echo "strict locking = no" >> "$CONFIG"' >> $SPATH/smb.postconf
+echo "echo '#USB_Accelerator_v$VERSION' >> /etc/smb.conf" >> $SPATH/smb.postconf
+if [ "$lang" = "zh" ]; then
+	echo "$SPATH/usbaccelerator.sh -DLZ" >> $SPATH/smb.postconf
+else
+	echo "$SPATH/usbaccelerator.sh -DL" >> $SPATH/smb.postconf
+fi
+echo 'sleep 10' >> $SPATH/smb.postconf
+echo "$SPATH/usbaccelerator.sh -Check"  >> $SPATH/smb.postconf
+chmod 755 $SPATH/smb.postconf
+service restart_nasapps >/dev/null 2>&1
 
 if [ "$End_Message" = "1" ]; then
 End_Message
@@ -465,8 +463,19 @@ if [ "$User" = "1" ]; then
 	else
 		echo "$SPATH/usbaccelerator.sh -DL" >> $SPATH/sfsmb
 	fi
+	echo 'sleep 10' >> $SPATH/sfsmb
+	echo "$SPATH/usbaccelerator.sh -Check"  >> $SPATH/sfsmb
 	chmod 755 $SPATH/sfsmb
-	nvram set script_usbmount="/jffs/scripts/sfsmb"
+	if [ -f "/jffs/post-mount" ]; then
+		if [ "$(grep 'sfsmb' /jffs/post-mount 2>/dev/null | wc -l)" = "0" ]; then
+			echo "$SPATH/sfsmb" >> /jffs/post-mount
+		fi
+	else
+		echo '#!/bin/sh' > /jffs/post-mount
+		echo "$SPATH/sfsmb" >> /jffs/post-mount
+	fi
+	chmod 755 /jffs/post-mount
+	nvram set script_usbmount="/jffs/post-mount"
 	nvram commit
 fi
 
@@ -479,7 +488,7 @@ if [ "$(grep USB_Accelerator /etc/smb.conf 2>/dev/null | wc -l)" = "0" ]; then
 		sleep 1
 		sed -i "\\~socket options~d" /etc/smb.conf
 		echo "strict locking = no" >> /etc/smb.conf
-		echo '#USB_Accelerator' >> /etc/smb.conf
+		echo "#USB_Accelerator_v$VERSION" >> /etc/smb.conf
 		nmbd -D -s /etc/smb.conf 2>/dev/null
 		/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
 	fi
@@ -499,15 +508,14 @@ fi
 }
 
 Enable_logs_zh () {
-logger -t "USB加速器" "USB加速器已经启动，代码$(grep 'strict locking' /etc/smb.conf 2>/dev/null | wc -l)$(grep 'socket options' /etc/smb.conf 2>/dev/null | wc -l)。"
-logger -t "USB加速器" "深入学习小米路由器的SMB优化后，小米模式即将迎来测试，欢迎愿意参与测试人员在帖子中报名！"
+logger -t "USB加速器" "USB加速器$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}')已经启动，代码$(grep 'strict locking' /etc/smb.conf 2>/dev/null | wc -l)$(grep 'socket options' /etc/smb.conf 2>/dev/null | wc -l)。"
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
 fi
 }
 
 Enable_logs () {
-logger -t "USB Accelerator" "USB Accelerator has started, code $(grep 'strict locking' /etc/smb.conf 2>/dev/null | wc -l)$(grep 'socket options' /etc/smb.conf 2>/dev/null | wc -l)."
+logger -t "USB Accelerator" "USB Accelerator$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') has started, code $(grep 'strict locking' /etc/smb.conf 2>/dev/null | wc -l)$(grep 'socket options' /etc/smb.conf 2>/dev/null | wc -l)."
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
 fi
@@ -534,9 +542,10 @@ printf '___________________________________________________________________\n'
 
 Disable () {
 rm -f $SPATH/sfsmb 2>/dev/null
+sed -i "\\~sfsmb~d" /jffs/post-mount 2>/dev/null
 rm -f $SPATH/smb.postconf 2>/dev/null
-nvram set script_usbmount=""
-nvram commit
+#nvram set script_usbmount=""
+#nvram commit
 service restart_nasapps >/dev/null 2>&1
 umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
 printf '\n___________________________________________________________________\n'
@@ -552,11 +561,12 @@ printf '___________________________________________________________________\n'
 Reinstall () {
 umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
 rm -f $SPATH/sfsmb 2>/dev/null
+sed -i "\\~sfsmb~d" /jffs/post-mount 2>/dev/null
 rm -f $SPATH/smb.postconf 2>/dev/null
 rm -f $SPATH/usbstatus.png 2>/dev/null
 rm -f $SPATH/usbaccelerator.sh 2>/dev/null
-nvram set script_usbmount=""
-nvram commit
+#nvram set script_usbmount=""
+#nvram commit
 service restart_nasapps >/dev/null 2>&1
 Download_files
 if [ "$lang" = "zh" ]; then
@@ -570,10 +580,11 @@ $SPATH/usbaccelerator.sh
 Remove () {
 umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
 rm -f $SPATH/sfsmb 2>/dev/null
+sed -i "\\~sfsmb~d" /jffs/post-mount 2>/dev/null
 rm -f $SPATH/smb.postconf 2>/dev/null
 rm -f $SPATH/usbstatus.png 2>/dev/null
-nvram set script_usbmount=""
-nvram commit
+#nvram set script_usbmount=""
+#nvram commit
 service restart_nasapps >/dev/null 2>&1
 if [ "$lang" = "zh" ]; then
 	printf '\nUSB加速器已经完全卸载，所有的一切都恢复到了安装前的状态。\n'
@@ -585,7 +596,7 @@ rm -f $SPATH/usbaccelerator.sh 2>/dev/null
 
 CheckEnable="0"
 if [ -f "$SPATH/smb.postconf" ]; then
-	if [ "$(grep 'USB_Accelerator_v' $SPATH/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
+	if [ "$(grep USB_Accelerator_v$VERSION $SPATH/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
 		Enable
 		CheckEnable="1"
 	else
@@ -594,7 +605,7 @@ if [ -f "$SPATH/smb.postconf" ]; then
 fi
 
 if [ -f "$SPATH/sfsmb" ]; then
-	if [ "$(grep 'USB_Accelerator_v' $SPATH/sfsmb 2>/dev/null | wc -l)" = "0" ]; then
+	if [ "$(grep USB_Accelerator_v$VERSION $SPATH/sfsmb 2>/dev/null | wc -l)" = "0" ]; then
 		User="1"
 		SFW_Enable
 		CheckEnable="1"
