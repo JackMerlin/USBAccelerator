@@ -51,7 +51,7 @@ Using your SSH client to login to your router, then copy and paste the following
 ```
 /jffs/scripts/usbaccelerator.sh
 ```
-If the update is available, you can see the update options.
+If the update is available, you can see the update option.
 
 ## Known Issues
 Maybe in the stock firmware is not working, but I'm not sure.
