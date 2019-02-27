@@ -44,7 +44,7 @@ Don't forget to press Enter key ;)
 ## Verify that USB Accelerator is Working
 * Open your browser to login your router, and check the USB icon at the top right have an "Plus", like the screenshot below.</br>
 ![USBAccelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_2.png)
-* Check the system logs, USB accelerator will report the running status.
+* Check the system logs, USB accelerator will report it running status.
 
 ## Updating or Reinstall or Remove
 Using your SSH client to login to your router, then copy and paste the following command:
