@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.4.0                     ######
+######                     Version 0.4.1                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
-VERSION='0.4.0'
+VERSION='0.4.1'
 SPATH='/jffs/scripts'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
 COLOR_WHITE='\033[0m'
@@ -547,11 +547,11 @@ Enable_logs_zh () {
 if [ "$(grep 'IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE' /etc/smb.conf 2>/dev/null | wc -l)$(grep 'socket options' /etc/smb.conf 2>/dev/null | wc -l)" = "11" ]; then
 	Logout="成功"
 else
-	Logout=""
+	Logout="几乎成功"
 fi
-logger -t "USB加速器" "USB加速器 v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') 已经$Logout 启动。"
+logger -t "USB加速器" "USB加速器 v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') $Logout启动。"
 logger -t "USB加速器" "如果你需要管理USB加速器，则在SSH中输入下方代码"
-logger -t "USB加速器" "SPATH/usbaccelerator.sh"
+logger -t "USB加速器" "$SPATH/usbaccelerator.sh"
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
 fi
@@ -561,11 +561,11 @@ Enable_logs () {
 if [ "$(grep 'IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE' /etc/smb.conf 2>/dev/null | wc -l)$(grep 'socket options' /etc/smb.conf 2>/dev/null | wc -l)" = "11" ]; then
 	Logout="successfully"
 else
-	Logout=""
+	Logout="almost successfully"
 fi
 logger -t "USB Accelerator" "USB Accelerator v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') has been $Logout started."
 logger -t "USB Accelerator" "If you want to set USB Accelerator, Please enter the code below"
-logger -t "USB Accelerator" "SPATH/usbaccelerator.sh"
+logger -t "USB Accelerator" "$SPATH/usbaccelerator.sh"
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
 fi
