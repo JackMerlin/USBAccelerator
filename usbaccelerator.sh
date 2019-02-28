@@ -8,7 +8,7 @@
 ######                                                       ######
 ###################################################################
 
-export PATH=/sbin:/bin:/usr/sbin:/usr/bin$PATH
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
 VERSION='0.4.1'
 SPATH='/jffs/scripts'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
