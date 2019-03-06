@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.4.1                     ######
+######                     Version 0.4.3                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='0.4.1'
+VERSION='0.4.3'
 SPATH='/jffs/scripts'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
 COLOR_WHITE='\033[0m'
@@ -55,8 +55,9 @@ printf '所以，如果有任何问题请反馈给我。\n'
 printf '\n'
 printf '%b版权：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '(c)2019 USB加速器由Jack制作，使用GPLv3许可证发布。\n'
-printf '如果你尊重GPLv3许可证，你可以自由地使用它。\n'
+printf '如果你遵循GPLv3许可证，你可以自由地使用它。\n'
 printf '源码在 https://github.com/JackMerlin/USBAccelerator\n'
+printf '许可证全文 https://github.com/JackMerlin/USBAccelerator/blob/master/LICENSE\n'
 printf '___________________________________________________________________\n'
 if [ "$CheckEnable" = "0" ]; then
 	printf '输入 %b1%b 开启%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -125,6 +126,7 @@ printf '%bCopyright%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '(c)2019 USB Accelerator by Jack, Use the GPLv3 license.\n'
 printf 'You can find the source code or feedback below\n'
 printf 'https://github.com/JackMerlin/USBAccelerator\n'
+printf 'The license: https://github.com/JackMerlin/USBAccelerator/blob/master/LICENSE\n'
 printf '___________________________________________________________________\n'
 if [ "$CheckEnable" = "0" ]; then
 	printf 'Enter %b1%b to %bEnable%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -277,7 +279,7 @@ done
 }
 
 Thanks_list () {
-Names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul, 特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119, 全池泼洒, glk17, luoyulong, kimhai, xiaole51'
+Names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul, 特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119, 全池泼洒, glk17, luoyulong, kimhai, xiaole51, vipnetant, vvwn'
 if [ "$lang" = "zh" ]; then
 printf '\n___________________________________________________________________\n'
 printf '%b特别感谢：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
@@ -564,7 +566,7 @@ else
 	Logout="almost successfully"
 fi
 logger -t "USB Accelerator" "USB Accelerator v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') has been $Logout started."
-logger -t "USB Accelerator" "If you want to set USB Accelerator, Please enter the code below"
+logger -t "USB Accelerator" "If you want to set USB Accelerator, Please enter the code below in the SSH client"
 logger -t "USB Accelerator" "$SPATH/usbaccelerator.sh"
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
@@ -584,7 +586,7 @@ else
 		if [ "$USBON" = "1" ]; then
 			printf 'For get the best speed, you may need to reboot the router.\n'
 		fi
-	printf 'If you want to set USB Accelerator, Please enter the code below\n'
+	printf 'If you want to set USB Accelerator, Please enter the code below in the SSH client\n'
 fi
 printf '%b%s/usbaccelerator.sh%b\n' "$COLOR_LIGHT_WHITE" "$SPATH" "$COLOR_WHITE"
 printf '___________________________________________________________________\n'
@@ -673,4 +675,5 @@ case "$1" in
 -DL)Enable_logs
 ;;
 *)Select_language
+;;
 esac
