@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.4.3                     ######
+######                     Version 0.4.4                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='0.4.3'
+VERSION='0.4.4'
 SPATH='/jffs/scripts'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
 COLOR_WHITE='\033[0m'
@@ -320,7 +320,7 @@ fi
 }
 
 Error_344 () {
-#Easter egg
+# Easter egg
 if [ "$lang" = "zh" ]; then
 printf '\n___________________________________________________________________\n'
 printf '你的路由器即将在5秒后爆炸，请享受这个烟火表演。\n'
@@ -376,6 +376,23 @@ fi
 }
 
 Download_files () {
+Checkinternet="0"
+while [ "$(nvram get ntp_ready)" = "0" ] && [ "$Checkinternet" -lt "300" ]; do
+	Checkinternet=$((Checkinternet+1))
+	sleep 1
+done
+
+if [ "$Checkinternet" -ge "300" ]; then
+	if [ "$lang" = "zh" ]; then
+		printf '\n网络连接错误，请联网后再试。\n'
+		logger -t "USB加速器" "网络连接错误，请联网后再试。"
+	else
+		printf '\nThere is no internet connection.\n'
+		logger -t "USB Accelerator" "There is no internet connection."
+	fi
+exit 1
+fi
+
 if [ -f "$SPATH/usbstatus.png" ]; then
 iconlocalmd5="$(md5sum "$SPATH/usbstatus.png" | awk '{print $1}')"
 	if [ -f "/rom/etc/ssl/certs/ca-certificates.crt" ]; then
@@ -416,6 +433,14 @@ else
 		wget -q -c -T 30 --no-check-certificate "$GITHUB_DIR/usbaccelerator.sh" -O "$SPATH/usbaccelerator.sh" && chmod 755 $SPATH/usbaccelerator.sh
 	fi
 	Checkupdates="1"
+fi
+}
+
+Check_jffs () {
+JFFSON="$(nvram show 2>/dev/null | grep 'jffs2_scripts=1' | wc -l)"
+if [ "$JFFSON" != "1" ]; then
+nvram set jffs2_scripts="1"
+nvram commit
 fi
 }
 
@@ -462,6 +487,7 @@ fi
 
 Enable () {
 Check_usbmode
+Check_jffs
 if [ -f "$SPATH/smb.postconf" ]; then
 	cp -f $SPATH/smb.postconf $SPATH/smb.postconf.old
 fi
