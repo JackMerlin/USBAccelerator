@@ -2,15 +2,16 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 0.4.4                     ######
+######                    Version 1.0_RC1                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='0.4.4'
+VERSION='1.0_RC1'
 SPATH='/jffs/scripts'
+GITHUB='https://github.com/JackMerlin/USBAccelerator'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
 COLOR_WHITE='\033[0m'
 COLOR_LIGHT_WHITE='\033[1;37m'
@@ -50,14 +51,14 @@ printf '在原始系统中一些参数被保守地锁定在较低的值内，\n'
 printf '因此加速器的原理其实是精确调教系统参数来释放硬件应有的性能。\n' 
 printf '___________________________________________________________________\n'
 printf '%b注意：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf '这是一个相当早期的脚本，它目前仍处在预览阶段，\n'
+printf '这是一个比较早期的脚本，它可能会有些不尽如人意，\n'
 printf '所以，如果有任何问题请反馈给我。\n'
 printf '\n'
 printf '%b版权：%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '(c)2019 USB加速器由Jack制作，使用GPLv3许可证发布。\n'
 printf '如果你遵循GPLv3许可证，你可以自由地使用它。\n'
-printf '源码在 https://github.com/JackMerlin/USBAccelerator\n'
-printf '许可证全文 https://github.com/JackMerlin/USBAccelerator/blob/master/LICENSE\n'
+printf '源码在 %s\n' "$GITHUB"
+printf '许可证全文 %s/blob/master/LICENSE\n' "$GITHUB"
 printf '___________________________________________________________________\n'
 if [ "$CheckEnable" = "0" ]; then
 	printf '输入 %b1%b 开启%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -67,9 +68,7 @@ if [ "$CheckEnable" = "1" ]; then
 	printf '输入 %b3%b 重装%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 if [ -f "$SPATH/usbaccelerator.sh" ]; then
-	if [ "$Checkupdates" = "1" ]; then
-		printf '输入 %b4%b 更新%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
-	fi
+	printf '输入 %b4%b 更新%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 	printf '输入 %b5%b 查看%b致谢名单\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 	printf '输入 %b9%b 卸载%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -91,7 +90,7 @@ break
 3)Reinstall
 break
 ;;
-4)$SPATH/usbaccelerator.sh
+4)Check_updates
 break
 ;;
 5)Thanks_list
@@ -119,14 +118,14 @@ printf 'How does it work?\n'
 printf 'Trust me, it does not have the magic, it just changes some settings to the best.\n' 
 printf '___________________________________________________________________\n'
 printf '%bWarning%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf 'Now it is a preview version, I mean maybe something not working for you,\n'
+printf 'Maybe some settings not working for you,\n'
 printf 'But, your feedback can make it be better, so let me hear your voice.\n'
 printf '\n'
 printf '%bCopyright%b\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '(c)2019 USB Accelerator by Jack, Use the GPLv3 license.\n'
 printf 'You can find the source code or feedback below\n'
-printf 'https://github.com/JackMerlin/USBAccelerator\n'
-printf 'The license: https://github.com/JackMerlin/USBAccelerator/blob/master/LICENSE\n'
+printf '%s\n' "$GITHUB"
+printf 'The license: %s/blob/master/LICENSE\n' "$GITHUB"
 printf '___________________________________________________________________\n'
 if [ "$CheckEnable" = "0" ]; then
 	printf 'Enter %b1%b to %bEnable%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -136,9 +135,7 @@ if [ "$CheckEnable" = "1" ]; then
 	printf 'Enter %b3%b to %bRe-install%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 fi
 if [ -f "$SPATH/usbaccelerator.sh" ]; then
-	if [ "$Checkupdates" = "1" ]; then
 		printf 'Enter %b4%b to %bUpdate%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
-	fi
 fi
 	printf 'Enter %b5%b to %bShow%b thanks list\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 	printf 'Enter %b9%b to %bRemove%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -160,7 +157,7 @@ break
 3)Reinstall
 break
 ;;
-4)$SPATH/usbaccelerator.sh
+4)Check_updates
 break
 ;;
 5)Thanks_list
@@ -194,8 +191,7 @@ case "$menu2" in
 1)Enable
 break
 ;;
-2)printf '此模式处于测试状态，可能效果并不明显。\n'
-SFW_Enable
+2)SFW_Enable
 break
 ;;
 3)Welcome_message_zh
@@ -209,7 +205,7 @@ printf '\n___________________________________________________________________\n'
 printf 'Does your router running %bAsuswrt-Merlin%b firmware?\n' "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
 printf '\n'
 printf '%by%b = Yes, it is true.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
-printf '%bn%b = No, this is asus stock firmware.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
+printf '%bn%b = No, this is asus Stock firmware.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '%br%b = Return to the previous menu.\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '___________________________________________________________________\n'
 printf 'Please enter\n'
@@ -336,8 +332,8 @@ printf '___________________________________________________________________\n'
 printf '糟糕，代码错误，引爆失败，请向作者报告这个错误。\n'
 printf '___________________________________________________________________\n'
 printf '按任意键继续\n'
-read -r "menu5"
-case "$menu5" in
+read -r "menu6"
+case "$menu6" in
 	*)Welcome_message_zh
 	;;
 esac
@@ -357,8 +353,8 @@ printf 'Error, please feedback this error code 344 to developers,\n'
 printf 'We will fix this error in the future.\n'
 printf '___________________________________________________________________\n'
 printf 'Enter any key to continue\n'
-read -r "menu5"
-case "$menu5" in
+read -r "menu6"
+case "$menu6" in
 	*)Welcome_message
 	;;
 esac
@@ -425,6 +421,7 @@ localmd5="$(md5sum "$SPATH/usbaccelerator.sh" | awk '{print $1}')"
 		Checkupdates="1"
 	else
 		rm -f /tmp/usbaccelerator.check 2>/dev/null
+		Checkupdates="0"
 	fi
 else
 	if [ -f "/rom/etc/ssl/certs/ca-certificates.crt" ]; then
@@ -436,21 +433,57 @@ else
 fi
 }
 
+Check_updates () {
+if [ "$Checkupdates" = "1" ]; then
+	if [ "$lang" = "zh" ]; then
+		printf '\n正在更新。\n'
+	fi
+	if [ "$lang" = "en" ]; then
+		printf '\nUpdating...\n'
+	fi
+	$SPATH/usbaccelerator.sh
+fi
+
+if [ "$Checkupdates" = "0" ]; then
+printf '\n___________________________________________________________________\n'
+	if [ "$lang" = "zh" ]; then
+		printf '暂无可用的更新。\n'
+		printf '___________________________________________________________________\n'
+		printf '按任意键继续\n'
+		read -r "menu4"
+		case "$menu4" in
+		*)Welcome_message_zh
+		;;
+		esac
+	fi
+	if [ "$lang" = "en" ]; then
+		printf 'No updates is available.\n'
+		printf '___________________________________________________________________\n'
+		printf 'Enter any key to continue\n'
+		read -r "menu4"
+		case "$menu4" in
+		*)Welcome_message
+		;;
+		esac
+	fi
+fi
+}
+
 Check_jffs () {
-JFFSON="$(nvram show 2>/dev/null | grep 'jffs2_scripts=1' | wc -l)"
-if [ "$JFFSON" != "1" ]; then
+if [ "$(nvram get jffs2_scripts)" != "1" ]; then
 nvram set jffs2_scripts="1"
 nvram commit
+Needtoreboot="1"
 fi
 }
 
 Check_usbmode () {
 USB3="$(nvram show 2>/dev/null | grep 'usb_usb3' | wc -l)"
 if [ "$USB3" = "1" ]; then
-	if [ "$(nvram show 2>/dev/null | grep 'usb_usb3=1')" != "usb_usb3=1" ]; then
+	if [ "$(nvram get usb_usb3)" != "1" ]; then
 		nvram set usb_usb3="1"
 		nvram commit
-		USBON="1"
+		Needtoreboot="1"
 			if [ "$lang" = "zh" ]; then
 				printf '\n已经为你开启USB 3.0。\n'
 			fi
@@ -577,9 +610,8 @@ if [ "$(grep 'IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE' /etc/smb.conf 2>/dev/null
 else
 	Logout="几乎成功"
 fi
-logger -t "USB加速器" "USB加速器 v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') $Logout启动。"
-logger -t "USB加速器" "如果你需要管理USB加速器，则在SSH中输入下方代码"
-logger -t "USB加速器" "$SPATH/usbaccelerator.sh"
+logger -t "USB加速器" "USB加速器v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}')$Logout启动。"
+logger -t "USB加速器" "如果你需要管理USB加速器，则在SSH中输入： $SPATH/usbaccelerator.sh"
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
 fi
@@ -592,8 +624,7 @@ else
 	Logout="almost successfully"
 fi
 logger -t "USB Accelerator" "USB Accelerator v$(grep USB_Accelerator /etc/smb.conf | awk -F 'v' '{print $2}') has been $Logout started."
-logger -t "USB Accelerator" "If you want to set USB Accelerator, Please enter the code below in the SSH client"
-logger -t "USB Accelerator" "$SPATH/usbaccelerator.sh"
+logger -t "USB Accelerator" "If you want to set USB Accelerator, Please enter the code in the SSH client: $SPATH/usbaccelerator.sh"
 if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
 mount --bind $SPATH/usbstatus.png /www/images/New_ui/usbstatus.png
 fi
@@ -603,13 +634,13 @@ End_Message () {
 printf '\n___________________________________________________________________\n'
 if [ "$lang" = "zh" ]; then
 	printf '已经开启USB加速器！\n'
-		if [ "$USBON" = "1" ]; then
+		if [ "$Needtoreboot" = "1" ]; then
 			printf '你可能需要重新启动才能达到最佳速度。\n'
 		fi
 	printf '如果你需要管理USB加速器，则在SSH中输入下方代码\n'
 else
 	printf 'USB Accelerator is enabled!\n'
-		if [ "$USBON" = "1" ]; then
+		if [ "$Needtoreboot" = "1" ]; then
 			printf 'For get the best speed, you may need to reboot the router.\n'
 		fi
 	printf 'If you want to set USB Accelerator, Please enter the code below in the SSH client\n'
@@ -659,6 +690,7 @@ rm -f $SPATH/usbaccelerator.sh 2>/dev/null
 if [ "$(cat /jffs/post-mount 2>/dev/null | wc -l)" -le "1" ]; then
 	nvram set script_usbmount=""
 	nvram commit
+	rm -f /jffs/post-mount 2>/dev/null
 fi
 service restart_nasapps >/dev/null 2>&1
 if [ "$lang" = "zh" ]; then
