@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 1.0_RC1                    ######
+######                    Version 1.0-rc2                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='1.0_RC1'
+VERSION='1.0-rc2'
 SPATH='/jffs/scripts'
 GITHUB='https://github.com/JackMerlin/USBAccelerator'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
@@ -239,8 +239,8 @@ printf '输入 %bn%b 不卸载\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '___________________________________________________________________\n'
 printf '请输入对应字母\n'
 printf '\n'
-read -r "menu9"
-case "$menu9" in
+read -r "menu3"
+case "$menu3" in
 y)Remove
 break
 ;;
@@ -259,8 +259,8 @@ printf '%bn%b = Cancel\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE"
 printf '___________________________________________________________________\n'
 printf 'Please enter\n'
 printf '\n'
-read -r "menu9"
-case "$menu9" in
+read -r "menu3"
+case "$menu3" in
 y)Remove
 break
 ;;
@@ -289,8 +289,8 @@ printf '（排名不分先后）\n'
 printf '%s等人\n' "$Names"
 printf '___________________________________________________________________\n'
 printf '按任意键继续\n'
-read -r "menu5"
-case "$menu5" in
+read -r "menu4"
+case "$menu4" in
 	*)Welcome_message_zh
 	;;
 esac
@@ -307,8 +307,8 @@ printf '(Names not listed in order)\n'
 printf '%s and others.\n' "$Names"
 printf '___________________________________________________________________\n'
 printf 'Enter any key to continue\n'
-read -r "menu5"
-case "$menu5" in
+read -r "menu4"
+case "$menu4" in
 	*)Welcome_message
 	;;
 esac
@@ -332,8 +332,8 @@ printf '___________________________________________________________________\n'
 printf '糟糕，代码错误，引爆失败，请向作者报告这个错误。\n'
 printf '___________________________________________________________________\n'
 printf '按任意键继续\n'
-read -r "menu6"
-case "$menu6" in
+read -r "menu5"
+case "$menu5" in
 	*)Welcome_message_zh
 	;;
 esac
@@ -353,8 +353,8 @@ printf 'Error, please feedback this error code 344 to developers,\n'
 printf 'We will fix this error in the future.\n'
 printf '___________________________________________________________________\n'
 printf 'Enter any key to continue\n'
-read -r "menu6"
-case "$menu6" in
+read -r "menu5"
+case "$menu5" in
 	*)Welcome_message
 	;;
 esac
@@ -435,13 +435,27 @@ fi
 
 Check_updates () {
 if [ "$Checkupdates" = "1" ]; then
+printf '\n___________________________________________________________________\n'
 	if [ "$lang" = "zh" ]; then
-		printf '\n正在更新。\n'
+		printf '更新完成，接下来将返回主菜单，建议手动关闭加速器并重新开启。\n'
+		printf '___________________________________________________________________\n'
+		printf '按任意键继续\n'
+		read -r "menu6"
+		case "$menu6" in
+		*)$SPATH/usbaccelerator.sh
+		;;
+		esac
 	fi
 	if [ "$lang" = "en" ]; then
-		printf '\nUpdating...\n'
+		printf 'Update completed! Please disable the USB accelerator and enable it again.\n'
+		printf '___________________________________________________________________\n'
+		printf 'Enter any key to continue\n'
+		read -r "menu6"
+		case "$menu6" in
+		*)$SPATH/usbaccelerator.sh
+		;;
+		esac
 	fi
-	$SPATH/usbaccelerator.sh
 fi
 
 if [ "$Checkupdates" = "0" ]; then
@@ -450,8 +464,8 @@ printf '\n___________________________________________________________________\n'
 		printf '暂无可用的更新。\n'
 		printf '___________________________________________________________________\n'
 		printf '按任意键继续\n'
-		read -r "menu4"
-		case "$menu4" in
+		read -r "menu6"
+		case "$menu6" in
 		*)Welcome_message_zh
 		;;
 		esac
@@ -460,8 +474,8 @@ printf '\n___________________________________________________________________\n'
 		printf 'No updates is available.\n'
 		printf '___________________________________________________________________\n'
 		printf 'Enter any key to continue\n'
-		read -r "menu4"
-		case "$menu4" in
+		read -r "menu6"
+		case "$menu6" in
 		*)Welcome_message
 		;;
 		esac
