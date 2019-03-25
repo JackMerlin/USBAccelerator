@@ -7,9 +7,9 @@
 ## Description
 In the Asuswrt router, the default settings do not give you the best USB performance, So the USB Accelerator will help you get the best USB SMB read and write speed by changing some settings.
 
-**I didn't know the computer language before, this is my first script, if there have error please forgive me.**
+***I didn't know the computer language before, this is my first script, if there have error please forgive me.***
 
-## the USB Accelerator script will
+## USB Accelerator script will
 ### If you use Asuswrt-Merlin firmware or forks
 1. Create a `/jffs/scripts/smb.postconf` file and change `socket options` and `strict locking` settings to increase SMB read and write speed.
 2. Enable USB 3.0 mode, If your router has the USB 3.0 port.
@@ -26,7 +26,7 @@ In the Asuswrt router, the default settings do not give you the best USB perform
 ## Requirements
 * An Asus router with [Asuswrt-Merlin](https://asuswrt.lostrealm.ca/) firmware installed.
 
-or
+**or**
 
 * An Asus router with using stock firmware (beta).
 
