@@ -1,13 +1,15 @@
 # USB Accelerator
-**The USB Accelerator can help you increase your router USB speed to +10% ~ +240%.**</br>
+**USB Accelerator can help you significantly improve the USB performance of your router.**
 ![USBAccelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_1.png)
+
+*This USB Accelerator is not about Google Tensor Processing Unit (TPU), This is a script running on router based on Asuswrt firmware. If you are looking Google TPU, [please check there](https://www.google.com/search?q=Google+TPU+USB+Accelerator).*
  
 ## Description
-In the Asuswrt router, the default settings do not give you the best USB performance, So the USB Accelerator will help you get the best USB SMB read and write speed by changing some settings.</br>
-</br>
+In the Asuswrt router, the default settings do not give you the best USB performance, So the USB Accelerator will help you get the best USB SMB read and write speed by changing some settings.
+
 **I didn't know the computer language before, this is my first script, if there have error please forgive me.**
 
-## The USB Accelerator script will
+## the USB Accelerator script will
 ### If you use Asuswrt-Merlin firmware or forks
 1. Create a `/jffs/scripts/smb.postconf` file and change `socket options` and `strict locking` settings to increase SMB read and write speed.
 2. Enable USB 3.0 mode, If your router has the USB 3.0 port.
@@ -22,17 +24,22 @@ In the Asuswrt router, the default settings do not give you the best USB perform
 5. Automatically check for updates at each run it.
 
 ## Requirements
-* An Asus router with  [Asuswrt-Merlin](https://asuswrt.lostrealm.ca/) firmware installed.
-* Enable JFFS and custom scripts.</br>
-or</br>
+* An Asus router with [Asuswrt-Merlin](https://asuswrt.lostrealm.ca/) firmware installed.
+
+or
+
 * An Asus router with using stock firmware (beta).
 
 ## Supported Models
 * RT-AC66U_B1
 * RT-AC68U
+* RT-AC1900P
 * RT-AC3200
 * RT-AC86U
+* RT-AC87U
 * RT-AC88U
+* RT-AC5300
+* RT-AX88U
 
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
@@ -42,16 +49,15 @@ Using an SSH client to login to your router, then copy and paste the following c
 Don't forget to press Enter key ;)
 
 ## Verify that USB Accelerator is Working
-* Open your browser to login your router, and check the USB icon at the top right have an "Plus", like the screenshot below.</br>
+* Open your browser to login your router, and check the USB icon at the top right have an "Plus", like the screenshot below.
 ![USBAccelerator](https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/.github/Screenshot_2.png)
-* Check the system logs, USB accelerator will report it running status.
+* Check the system logs, USB Accelerator will report it running status.
 
 ## Updating or Reinstall or Remove
 Using your SSH client to login to your router, then copy and paste the following command:
 ```
 /jffs/scripts/usbaccelerator.sh
 ```
-If the update is available, you can see the update option.
 
 ## Known Issues
 Maybe in the stock firmware is not working, but I'm not sure.
