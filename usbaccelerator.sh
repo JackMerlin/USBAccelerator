@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 1.0-rc2                    ######
+######                    Version 1.0-rc3                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='1.0-rc2'
+VERSION='1.0-rc3'
 SPATH='/jffs/scripts'
 GITHUB='https://github.com/JackMerlin/USBAccelerator'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
@@ -579,10 +579,17 @@ if [ "$User" = "1" ]; then
 	if [ -f "/jffs/post-mount" ]; then
 		if [ "$(grep 'sfsmb' /jffs/post-mount 2>/dev/null | wc -l)" = "0" ]; then
 			echo "$SPATH/sfsmb" >> /jffs/post-mount
+			if [ -n "$(nvram get script_usbmount)" ] && [ "$(nvram get script_usbmount)" != "/jffs/post-mount" ]; then
+				echo "$(nvram get script_usbmount)" >> /jffs/post-mount
+			fi
+			chmod 755 /jffs/post-mount
 		fi
 	else
 		echo '#!/bin/sh' > /jffs/post-mount
 		echo "$SPATH/sfsmb" >> /jffs/post-mount
+		if [ -n "$(nvram get script_usbmount)" ] && [ "$(nvram get script_usbmount)" != "/jffs/post-mount" ]; then
+			echo "$(nvram get script_usbmount)" >> /jffs/post-mount
+		fi
 		chmod 755 /jffs/post-mount
 	fi
 	nvram set script_usbmount="/jffs/post-mount"
