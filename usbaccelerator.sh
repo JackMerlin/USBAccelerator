@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 1.0-rc3                    ######
+######                  Version 1.0-rc3-afd                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='1.0-rc3'
+VERSION='1.0-rc3-afd'
 SPATH='/jffs/scripts'
 GITHUB='https://github.com/JackMerlin/USBAccelerator'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
@@ -61,7 +61,11 @@ printf '源码在 %s\n' "$GITHUB"
 printf '许可证全文 %s/blob/master/LICENSE\n' "$GITHUB"
 printf '___________________________________________________________________\n'
 if [ "$CheckEnable" = "0" ]; then
+	if [ "$AFD" != "0" ]; then
+	printf '输入 %b0%b 开启%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	else
 	printf '输入 %b1%b 开启%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	fi
 fi
 if [ "$CheckEnable" = "1" ]; then
 	printf '输入 %b2%b 关闭%bUSB加速器\n' "$COLOR_LIGHT_GREEN" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -128,7 +132,11 @@ printf '%s\n' "$GITHUB"
 printf 'The license: %s/blob/master/LICENSE\n' "$GITHUB"
 printf '___________________________________________________________________\n'
 if [ "$CheckEnable" = "0" ]; then
+	if [ "$AFD" != "0" ]; then
+	printf 'Enter %b0%b to %bEnable%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	else
 	printf 'Enter %b1%b to %bEnable%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
+	fi
 fi
 if [ "$CheckEnable" = "1" ]; then
 	printf 'Enter %b2%b to %bDisable%b USB Accelerator\n' "$COLOR_LIGHT_GREEN" "$COLOR_WHITE" "$COLOR_LIGHT_WHITE" "$COLOR_WHITE"
@@ -317,6 +325,7 @@ fi
 
 Error_344 () {
 # Easter egg
+AFD="0"
 if [ "$lang" = "zh" ]; then
 printf '\n___________________________________________________________________\n'
 printf '你的路由器即将在5秒后爆炸，请享受这个烟火表演。\n'
