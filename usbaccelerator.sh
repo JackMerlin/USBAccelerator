@@ -2,14 +2,14 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 1.0-rc3                    ######
+######                      Version 1.0                      ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
 ###################################################################
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-VERSION='1.0-rc3'
+VERSION='1.0'
 SPATH='/jffs/scripts'
 GITHUB='https://github.com/JackMerlin/USBAccelerator'
 GITHUB_DIR='https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master'
@@ -319,17 +319,7 @@ Error_344 () {
 # Easter egg
 if [ "$lang" = "zh" ]; then
 printf '\n___________________________________________________________________\n'
-printf '你的路由器即将在5秒后爆炸，请享受这个烟火表演。\n'
-printf '\n'
-sleep 1
-printf '  5\n'
-sleep 1
-printf '  4\n'
-sleep 1
-printf '  3\n'
-sleep 5
-printf '___________________________________________________________________\n'
-printf '糟糕，代码错误，引爆失败，请向作者报告这个错误。\n'
+printf '这是一个隐藏信息，以感谢你对此脚本的使用。\n'
 printf '___________________________________________________________________\n'
 printf '按任意键继续\n'
 read -r "menu5"
@@ -339,18 +329,7 @@ case "$menu5" in
 esac
 else
 printf '\n___________________________________________________________________\n'
-printf 'Your router will be auto self-destruct, please enjoy a bricked router.\n'
-printf '\n'
-sleep 1
-printf '  5\n'
-sleep 1
-printf '  4\n'
-sleep 1
-printf '  3\n'
-sleep 5
-printf '___________________________________________________________________\n'
-printf 'Error, please feedback this error code 344 to developers,\n'
-printf 'We will fix this error in the future.\n'
+printf 'This is a easter egg to thank you for your use.\n'
 printf '___________________________________________________________________\n'
 printf 'Enter any key to continue\n'
 read -r "menu5"
