@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                   Version 2.0-beta1                   ######
+######                  Version 2.0-beta1.1                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta1"
+VERSION="2.0-beta1.1"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -525,7 +525,14 @@ if [ "$CONFIRM_REINSTALL" = "1" ]; then
 					printf 'Please wait for a while, if successful will reload...\n'
 				fi
 				CLEAN_INSTALL="0";TRIG_CKNT_BY_USER="1"; TRIG_RI_BY_USER="1"; Reinstall
-				if [ "$SC_REINSTALL" -gt "0" ]; then
+				if [ "$SC_REINSTALL" -gt "0" ] && [ "$SC_REINSTALL" -lt "100" ]; then
+					if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
+						printf '%b注意%b:USB加速器已卸载却无法重装，退出后请手动重新下载\n' "$C_LR" "$C_RS"
+					else
+						printf '%bWARNING%b: Files are missing, please reinstall manually\n' "$C_LR" "$C_RS"
+					fi
+					Home; break
+				elif [ "$SC_REINSTALL" -gt "0" ]; then
 					if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 						printf '重装失败\n'
 					else
@@ -1225,7 +1232,7 @@ while true; do
 		1)
 			if [ "$USB_MODE" = "0" ]; then
 				Check_USB_Mode
-				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '已经更改，你可能需要重新启路由器才能应用修改\n'; else printf 'Change complete, you may need to reboot the router\n'; fi
+				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '已经更改，你可能需要重新启动路由器才能应用修改\n'; else printf 'Change complete, you may need to reboot the router\n'; fi
 				break
 			else
 				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '无效的输入\n'; else printf 'Invalid change\n'; fi
@@ -1243,7 +1250,7 @@ while true; do
 					sed -i '/^$/d' "$UA_DIR/CONFIG"
 					chmod 644 $UA_DIR/CONFIG
 				fi
-				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '已经更改，你可能需要重新启路由器才能应用修改\n'; else printf 'Change complete, you may need to reboot the router\n'; fi
+				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '已经更改，你可能需要重新启动路由器才能应用修改\n'; else printf 'Change complete, you may need to reboot the router\n'; fi
 				break
 			else
 				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '无效的输入\n'; else printf 'Invalid change\n'; fi
@@ -2360,7 +2367,6 @@ if [ "$DL_MODE" = "wget_norm" ] || [ "$DL_MODE" = "wget_nockca" ]; then
 		cacrt="--no-check-certificate"
 	fi
 	opts="-q --tries=3 --timeout=3 $cacrt -O"
-	opts="--tries=3 --timeout=3 -O"
 
 	if [ "$CUR_DIR/$S_NAME" != "/tmp/usbaccelerator.sh" ]; then
 		wget $opts "/tmp/usbaccelerator.sh" "$SRC/usbaccelerator.sh"
