@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                  Version 2.0-beta1.2                  ######
+######                  Version 2.0-beta1.3                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta1.2"
+VERSION="2.0-beta1.3"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -2352,7 +2352,7 @@ else
 fi
 
 if [ "$SC_DOWNLOAD" -gt "0" ]; then
-	SC_GLOBAL="0"
+	SC_DOWNLOAD="0"
 	if [ "$min_ver" != "$wget_ver" ] && [ "$new_ver" != "$wget_ver" ]; then
 		DL_MODE="wget_nockca"
 	else
@@ -2374,7 +2374,7 @@ if [ "$DL_MODE" = "wget_norm" ] || [ "$DL_MODE" = "wget_nockca" ]; then
 			rm -f /tmp/usbaccelerator.sh
 			SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
 		fi
-	elif [ "$SC_DOWNLOAD" -eq "0" ]; then
+	elif [ "$SC_DOWNLOAD" -gt "0" ]; then
 		SC_DOWNLOAD="0"
 	fi
 
