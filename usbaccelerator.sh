@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                   Version 2.0-beta3                   ######
+######                  Version 2.0-beta3.1                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta3"
+VERSION="2.0-beta3.1"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -81,7 +81,7 @@ if [ "$FWTYPE" = "384M" ] &&  [ "$HND_MODEL" = "1" ] && [ "$(awk -F'"' '/^IGNORE
 		read -r "home_menu0"
 		case "$home_menu0" in
 			y|Y)
-				Check_Directory
+				Check_Directories
 				sed -i '/IGNORED_CKFWHW/d' "$UA_DIR/CONFIG" 2>/dev/null
 				echo '' >> "$UA_DIR/CONFIG"
 				echo 'IGNORED_CKFWHW="1"' >> "$UA_DIR/CONFIG"
@@ -124,7 +124,7 @@ if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
 	fi
 	if [ "$SC_CKFILES" -gt "1" ] && [ "$DONT_DL" != "1" ]; then
 		Download_Files_UI
-		if [ "$SC_DOWNLOAD" -eq "0" ] && [ -f $UA_DIR/usbaccelerator.sh ] && [ -f $UA_DIR/usbstatus.png ]; then
+		if [ "$SC_DOWNLOAD" = "0" ] && [ -f $UA_DIR/usbaccelerator.sh ] && [ -f $UA_DIR/usbstatus.png ]; then
 			sh $UA_DIR/usbaccelerator.sh; SC_GLOBAL="$?"; rm -f /tmp/usbaccelerator.sh; exit "$SC_GLOBAL"
 		else
 			if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
@@ -1243,7 +1243,7 @@ while true; do
 				nvram set usb_usb3="0"
 				nvram commit
 				if [ "$(awk -F'"' '/^USB_MODE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "2_0" ]; then
-					Check_Directory
+					Check_Directories
 					sed -i '/USB_MODE/d' "$UA_DIR/CONFIG" 2>/dev/null
 					echo '' >> "$UA_DIR/CONFIG"
 					echo 'USB_MODE="2_0"' >> "$UA_DIR/CONFIG"
@@ -1555,7 +1555,7 @@ while true; do
 		y|Y)
 			clear
 			if [ -z "$FIRST_TIME" ]; then
-				Check_Directory
+				Check_Directories
 				sed -i '/FIRST_TIME/d' "$UA_DIR/CONFIG" 2>/dev/null
 				echo '' >> "$UA_DIR/CONFIG"
 				echo "FIRST_TIME=\"$TIMESTAMP\"" >> "$UA_DIR/CONFIG"
@@ -1647,15 +1647,15 @@ Whats_New() {
 printf '___________________________________________________________________\n'
 if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
-	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME"
+	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  修复Merlin固件下可能开启失败的问题\n'
+	printf '  这里本应记载着新版变化、发行日志，可是作者很懒，什么也没有写\n'
 	printf '\n  %b回车键%b  =  返回\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
-	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME"
+	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Fixed Merlin firmware may not be enabled.\n'
+	printf '  No more information is available now, please check back later.\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -1896,7 +1896,7 @@ else
 fi
 }
 
-Check_Directory() {
+Check_Directories() {
 if [ ! -d $ADD_DIR ]; then
 	mkdir -m 755 $ADD_DIR 2>/dev/null
 fi
@@ -1932,7 +1932,7 @@ if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
 			fi
 		fi
 	else
-		Check_Directory
+		Check_Directories
 		if [ "$CUR_DIR/$S_NAME" != "$UA_DIR/usbaccelerator.sh" ] && [ ! -f $UA_DIR/usbaccelerator.sh ]; then
 			cp -f "$CUR_DIR/$S_NAME" $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
 			SC_CKFILES="1"
@@ -2077,7 +2077,7 @@ if [ "$(nvram get jffs2_scripts 2>/dev/null)" != "1" ]; then
 fi
 }
 
-Check_Mount_Scripts() {
+Check_Mount_Script() {
 if [ -z "$(nvram get script_usbmount 2>/dev/null)" ]; then
 	if [ "$(awk -F'"' '/^ENABLE_MOUNT_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "1" ]; then
 		sed -i '/ENABLE_MOUNT_SCRIPTS/d' "$UA_DIR/CONFIG" 2>/dev/null
@@ -2098,7 +2098,7 @@ if [ -n "$(nvram get usb_usb3 2>/dev/null)" ]; then
 		nvram set usb_usb3="1"
 		nvram commit
 		if [ "$(awk -F'"' '/^USB_MODE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "3_0" ]; then
-			Check_Directory
+			Check_Directories
 			sed -i '/USB_MODE/d' "$UA_DIR/CONFIG" 2>/dev/null
 			echo '' >> "$UA_DIR/CONFIG"
 			echo 'USB_MODE="3_0"' >> "$UA_DIR/CONFIG"
@@ -2124,7 +2124,7 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 			Download_Files
 			Move_Files
 		else
-			Check_Directory
+			Check_Directories
 			if [ "$CUR_DIR/$S_NAME" != "$UA_DIR/usbaccelerator.sh" ]; then
 				mv -f "$CUR_DIR/$S_NAME" $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
 			fi
@@ -2256,7 +2256,7 @@ SRC="$SRC_1"
 HOST_HOME="$HOST_HOME_1"
 
 if [ "$(awk -F'"' '/^CFG_SRC=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "github" ]; then
-	Check_Directory
+	Check_Directories
 	sed -i '/CFG_SRC/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'CFG_SRC="github"' >> "$UA_DIR/CONFIG"
@@ -2270,7 +2270,7 @@ SRC="$SRC_2"
 HOST_HOME="$HOST_HOME_2"
 
 if [ "$(awk -F'"' '/^CFG_SRC=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "gitlab" ]; then
-	Check_Directory
+	Check_Directories
 	sed -i '/CFG_SRC/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'CFG_SRC="gitlab"' >> "$UA_DIR/CONFIG"
@@ -2377,7 +2377,7 @@ fi
 
 Move_Files() {
 FILE_MOVED="0"
-Check_Directory
+Check_Directories
 if [ -s /tmp/usbaccelerator.sh ] && [ -z "$DONT_MV_UA" ]; then
 	if [ "$CUR_DIR" = "/tmp" ]; then
 		cp -f /tmp/usbaccelerator.sh $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
@@ -2398,7 +2398,7 @@ fi
 
 Set_Language_CN() {
 if [ "$(awk -F'"' '/^LANG=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "CN" ]; then
-	Check_Directory
+	Check_Directories
 	sed -i '/LANG/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'LANG="CN"' >> "$UA_DIR/CONFIG"
@@ -2410,7 +2410,7 @@ LANG="CN"
 
 Set_Language_EN() {
 if [ "$(awk -F'"' '/^LANG=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "EN" ]; then
-	Check_Directory
+	Check_Directories
 	sed -i '/LANG/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'LANG="EN"' >> "$UA_DIR/CONFIG"
@@ -2425,7 +2425,7 @@ SC_ENABLE="0"
 # Status code of enable: "0" succeeded, "0-99" failed, "100" already enabled, "1000" unsupported firmware.
 
 Check_Firmware
-Check_Directory
+Check_Directories
 
 if [ "$RELEASE_TYPE" = "stable" ]; then
 	if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
@@ -2607,7 +2607,7 @@ if [ ! -f $S_DIR/post-mount ] || [ "$(grep -i "USB_Accelerator_v$VERSION" $S_DIR
 	if [ -n "$(nvram get script_usbmount 2>/dev/null)" ] && [ "$(nvram get script_usbmount)" != "$S_DIR/post-mount" ] && [ "$(nvram get script_usbmount)" != "/jffs/post-mount" ]; then
 		echo "$(nvram get script_usbmount)" >> $S_DIR/post-mount
 	else
-		Check_Mount_Scripts
+		Check_Mount_Script
 	fi
 	if [ "$bak_postmount" = "1" ] && [ -s $S_DIR/post-mount.old ]; then
 		grep -v '#' $S_DIR/post-mount.old | sed '/^$/d' >> $S_DIR/post-mount
@@ -2670,7 +2670,7 @@ SC_DISABLE="0"
 # Status code of disable: "0" succeeded, "0-99" failed, "100" already disabled, "1000" unsupported firmware.
 
 Check_Firmware
-Check_Directory
+Check_Directories
 
 if [ "$RELEASE_TYPE" = "stable" ]; then
 	if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
@@ -3066,7 +3066,7 @@ fi
 
 if [ "$SC_UPDATE" -eq "1" ]; then
 	NEW_VERSION="$(awk -F'"' '/^VERSION=/ {print $2}' $UA_DIR/usbaccelerator.sh 2>/dev/null)"
-	Check_Directory
+	Check_Directories
 	sed -i '/UPDATE_COMPLETED/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo "UPDATE_COMPLETED=\"$TIMESTAMP\"" >> "$UA_DIR/CONFIG"
@@ -3136,7 +3136,7 @@ hour="$(date +%H)"
 week="$(date +%w)"
 
 if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "1" ]; then
-	Check_Directory
+	Check_Directories
 	sed -i '/AUTO_UPDATE/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'AUTO_UPDATE="1"' >> "$UA_DIR/CONFIG"
@@ -3180,7 +3180,7 @@ fi
 
 Disable_Auto_Update() {
 if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
-	Check_Directory
+	Check_Directories
 	sed -i '/AUTO_UPDATE/d' "$UA_DIR/CONFIG" 2>/dev/null
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'AUTO_UPDATE="0"' >> "$UA_DIR/CONFIG"
