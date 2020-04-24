@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                  Version 2.0-beta3.1                  ######
+######                  Version 2.0-beta3.2                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta3.1"
+VERSION="2.0-beta3.2"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -2672,11 +2672,7 @@ SC_DISABLE="0"
 Check_Firmware
 Check_Directories
 
-if [ "$RELEASE_TYPE" = "stable" ]; then
-	if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
-		KEEP_UPDATE="1"
-	fi
-elif [ -z "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" ]; then
+if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 	KEEP_UPDATE="1"
 fi
 
