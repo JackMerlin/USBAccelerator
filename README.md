@@ -6,7 +6,7 @@
 ## USB Accelerator script will
 ### When you use Asuswrt-Merlin firmware or forks
 1. Create `/jffs/scripts/smb.postconf` file to change `socket options` `deadtime` and `strict locking` options of `smb.conf`.
-2. Add an icon in WebGUI to show the working status.
+2. Add an icon in Web GUI to show the working status.
 
 ### When you use Asuswrt Stock firmware
 1. Create `/jffs/scripts/post-mount` file and to change `socket options` `deadtime` and `strict locking` options of `smb.conf`.
