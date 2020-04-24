@@ -74,7 +74,7 @@ When usb device is mounted, the USB Accelerator will run once to modify the `smb
 ### Should I download USB Accelerator from GitHub or GitLab?
 Please use GitHub and use [GitLab](https://gitlab.com/JackMerlin/USBAccelerator/) only when GitHub is not available.
 
-## Where should I report issues?
+### Where should I report issues?
 Only on GitHub.
 
 ### Why is there no speed increase in the FTP?
