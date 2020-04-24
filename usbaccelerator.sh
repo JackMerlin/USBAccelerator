@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                   Version 2.0-beta2                   ######
+######                   Version 2.0-beta3                   ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta2"
+VERSION="2.0-beta3"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -1649,13 +1649,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  改善原厂固件下使用时的稳定性\n'
+	printf '  修复Merlin固件下可能开启失败的问题\n'
 	printf '\n  %b回车键%b  =  返回\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Improve stability in stock firmware.\n'
+	printf '  Fixed Merlin firmware may not be enabled.\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -2496,7 +2496,7 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -ci accelerator $S_DIR/smb.postconf 2
 	FORCE_ENABLE="1"
 fi
 
-if [ -f $S_DIR/smb.postconf ] && [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ]; then
+if [ -f $S_DIR/smb.postconf ] && [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/smb.postconf 2>/dev/null | wc -l)" = "0" ] ; then
 	sed -i '0,/CONFIG/{//d;}' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
@@ -2519,13 +2519,23 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 	echo 'sed -i "/global/a\deadtime = 10" "$CONFIG"' >> $S_DIR/smb.postconf
 	echo 'sed -i "/global/a\strict locking = no" "$CONFIG"' >> $S_DIR/smb.postconf
 	echo "echo '# USB_Accelerator_v$VERSION'"' >> "$CONFIG"' >> $S_DIR/smb.postconf
+	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> $S_DIR/smb.postconf
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
 		KEEP_UPDATE="0"
 	fi
 	chmod 755 $S_DIR/smb.postconf
 	service restart_nasapps >/dev/null 2>&1
-	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> $S_DIR/smb.postconf
+	ck_smbd="0"
+	while [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -eq "0" ] && [ "$ck_smbd" -lt "5" ]; do
+		ck_smbd="$((ck_smbd + 1))"
+		sleep 1
+	done
+	ck_smbconf_2="0"
+	while [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ] && [ "$ck_smbconf_2" -lt "5" ]; do
+		ck_smbconf_2="$((ck_smbconf_2 + 1))"
+		sleep 1
+	done
 	if [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -gt "0" ] && [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ]; then
 		SC_ENABLE="$((SC_ENABLE + 1))"
 	fi
@@ -2550,7 +2560,11 @@ while [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -eq "0" ] && [ "$ck_smbd
 done
 
 if [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ] || [ "$FORCE" = "1" ]; then
-	sleep 5
+	ck_smbconf_1="0"
+	while [ ! -s /etc/smb.conf ] && [ "$ck_smbconf_1" -lt "5" ]; do
+		ck_smbconf_1="$((ck_smbconf_1 + 1))"
+		sleep 1
+	done
 	if [ -s /etc/smb.conf ]; then
 		sed -i '/deadtime/d;/strict locking/d' "/etc/smb.conf" 2>/dev/null
 		sed -i '/[aA]ccelerator/d' "/etc/smb.conf" 2>/dev/null
