@@ -78,7 +78,7 @@ Please use GitHub and use [GitLab](https://gitlab.com/JackMerlin/USBAccelerator/
 GitLab only supports TLS 1.2 and higher, If you use 380 stock firmware, you will not be able to install from GitLab, only `wget` with 384 stock firmware supports TLS 1.2.
 If you think your firmware supports it, please use the following command to install:
 ```Shell
-/usr/sbin/wget --tries=3 --timeout=3 --no-check-certificate -O "/tmp/usbaccelerator.sh" "https://gitlab.com/JackMerlin/USBAccelerator/raw/master/usbaccelerator.sh" && chmod 755 /tmp/usbaccelerator.sh && sh /tmp/usbaccelerator.sh --github --shellui
+/usr/sbin/wget --tries=3 --timeout=3 --no-check-certificate -O "/tmp/usbaccelerator.sh" "https://gitlab.com/JackMerlin/USBAccelerator/raw/master/usbaccelerator.sh" && chmod 755 /tmp/usbaccelerator.sh && sh /tmp/usbaccelerator.sh --gitlab --shellui
 ```
 
 ### Where should I report issues?
