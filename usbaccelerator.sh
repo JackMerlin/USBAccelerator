@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                 Version 2.0-beta3.4.1                 ######
+######                  Version 2.0-beta3.5                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta3.4.1"
+VERSION="2.0-beta3.5"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -967,6 +967,9 @@ if [ -n "$SC_DOWNLOAD" ] && [ "$SC_DOWNLOAD" -gt "0" ]; then
 	printf '___________________________________________________________________\n'
 	if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 		printf '%b下载文件好像失败了呀，要不要再试一次呢？%b\n' "$C_Y" "$C_RS"
+		if [ "$SC_DOWNLOAD" -gt "99" ]; then
+			printf '你的固件不支持从GitLab下载，请切换到GitHub\n'
+		fi
 		printf '  %b1%b  =  再试一次\n' "$C_LG" "$C_RS"
 		printf '  %b2%b  =  切换安装来源再下载\n' "$C_LG" "$C_RS"
 		if [ "$DLUI_NOTRY" = "1" ]; then
@@ -974,6 +977,9 @@ if [ -n "$SC_DOWNLOAD" ] && [ "$SC_DOWNLOAD" -gt "0" ]; then
 		fi
 	else
 		printf 'Uhhh...looks like the download failed.\n%bDo you want to try again?%b\n' "$C_Y" "$C_RS"
+		if [ "$SC_DOWNLOAD" -gt "99" ]; then
+			printf 'Your firmware cannot be downloaded from GitLab, please use GitHub\n'
+		fi
 		printf '  %b1%b  =  Try again\n' "$C_LG" "$C_RS"
 		printf '  %b2%b  =  Change Source and Download\n' "$C_LG" "$C_RS"
 		if [ "$DLUI_NOTRY" = "1" ]; then
@@ -1649,13 +1655,19 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  这里本应记载着新版变化、发行日志，可是作者很懒，什么也没有写\n'
+	printf '  修复了下载组件的错误\n'
+	printf '  修复了启用禁用时的错误，感谢@thelonelycoder\n'
+	printf '  改善了与其他smb.postconf脚本兼容性，感谢@thelonelycoder\n'
 	printf '\n  %b回车键%b  =  返回\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  No more information is available now, please check back later.\n'
+	printf '  Fixed: When wget version is too low and does not support TLS 1.2,\n'
+	printf '  wget will not switch to curl even if curl is available.\n'
+	printf '  Fixed: bugs when enabling and disabling. thanks @thelonelycoder.\n'
+	printf '  Improved the compatibility of other scripts in smb.postconf. thanks\n'
+	printf '  @thelonelycoder.\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -2291,7 +2303,6 @@ if [ -z "$SRC" ]; then
 fi
 
 Check_Model
-Check_Firmware
 
 if [ "$CK_MOD" = "GT-" ]; then
 	ICONTYPE="-gt"
@@ -2301,32 +2312,29 @@ else
 	ICONTYPE=""
 fi
 
-wget_ver="$(wget --version 2>/dev/null | head -n 1 | awk '{print $3}')"
-min_ver="1.16.1"
-new_ver="$(echo -e "$min_ver\n$wget_ver" | sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -n | tail -1)"
-
-if [ -n "$wget_ver" ] && [ "$min_ver" != "$wget_ver" ] && [ "$new_ver" != "$wget_ver" ]; then
-	if [ "$FWTYPE" = "380M" ] || [ "$FWTYPE" = "384M" ]; then
-		DL_MODE="curl_norm"
-	else
-		DL_MODE="wget_nockca"
-	fi
+if [ -n "$(curl --version 2>/dev/null)" ]; then
+	DL_MODE="curl_norm"
 else
-	if [ -z "$wget_ver" ] || [ "$FWTYPE" = "380M" ] || [ "$FWTYPE" = "384M" ]; then
-		DL_MODE="curl_norm"
-	else
+	wget_ver="$(wget --version 2>/dev/null | head -n 1 | awk '{print $3}')"
+	min_ver="1.16.1"
+	new_ver="$(echo -e "$min_ver\n$wget_ver" | sort -t '.' -k 1,1 -k 2,2 -k 3,3 -k 4,4 -n | tail -1)"
+	if [ -n "$wget_ver" ] && [ "$new_ver" = "$wget_ver" ]; then
 		DL_MODE="wget_norm"
+	elif [ "$SRC" = "$SRC_1" ]; then
+		DL_MODE="wget_norm"
+	else
+		SC_DOWNLOAD="100"
 	fi
 fi
 
-if [ "$DL_MODE" = "curl_norm" ] && [ -f /usr/sbin/curl ]; then
+if [ "$DL_MODE" = "curl_norm" ]; then
 	if [ "$CUR_DIR/$S_NAME" != "/tmp/usbaccelerator.sh" ]; then
 		curl -fsL --retry 3 --connect-timeout 3 "$SRC/usbaccelerator.sh" -o "/tmp/usbaccelerator.sh"
 		if [ "$?" -gt "0" ]; then
 			rm -f /tmp/usbaccelerator.sh
 			SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
 		fi
-	elif [ "$SC_DOWNLOAD" -eq "0" ]; then
+	else
 		SC_DOWNLOAD="0"
 	fi
 
@@ -2335,21 +2343,10 @@ if [ "$DL_MODE" = "curl_norm" ] && [ -f /usr/sbin/curl ]; then
 		rm -f /tmp/usbstatus.png
 		SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
 	fi
-else
-	SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
 fi
 
-if [ "$SC_DOWNLOAD" -gt "0" ]; then
-	SC_DOWNLOAD="0"
-	if [ "$min_ver" != "$wget_ver" ] && [ "$new_ver" != "$wget_ver" ]; then
-		DL_MODE="wget_nockca"
-	else
-		DL_MODE="wget_norm"
-	fi
-fi
-
-if [ "$DL_MODE" = "wget_norm" ] || [ "$DL_MODE" = "wget_nockca" ]; then
-	if [ -f /rom/etc/ssl/certs/ca-certificates.crt ] && [ "$DL_MODE" != "wget_nockca" ]; then
+if [ "$DL_MODE" = "wget_norm" ]; then
+	if [ -f /rom/etc/ssl/certs/ca-certificates.crt ]; then
 		cacrt="--ca-certificate=/rom/etc/ssl/certs/ca-certificates.crt"
 	else
 		cacrt="--no-check-certificate"
@@ -2362,7 +2359,7 @@ if [ "$DL_MODE" = "wget_norm" ] || [ "$DL_MODE" = "wget_nockca" ]; then
 			rm -f /tmp/usbaccelerator.sh
 			SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
 		fi
-	elif [ "$SC_DOWNLOAD" -gt "0" ]; then
+	else
 		SC_DOWNLOAD="0"
 	fi
 
@@ -2497,20 +2494,23 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -ci accelerator $S_DIR/smb.postconf 2
 		mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
 	fi
 	FORCE_ENABLE="1"
+	bak_smbpostconf="1"
 fi
 
-if [ -f $S_DIR/smb.postconf ] && [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/smb.postconf 2>/dev/null | wc -l)" = "0" ] ; then
-	sed -i '0,/CONFIG/{//d;}' "$S_DIR/smb.postconf" 2>/dev/null
-	sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
-	sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
-	sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
-	sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
-		rm -f $S_DIR/smb.postconf
-	else
-		mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+if [ -f $S_DIR/smb.postconf ]; then
+	if [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
+		sed -i '0,/CONFIG/{//d;}' "$S_DIR/smb.postconf" 2>/dev/null
+		sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
+		sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
+		sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
+		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
+			rm -f $S_DIR/smb.postconf
+		else
+			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+		fi
+		FORCE_ENABLE="1"
 	fi
-	FORCE_ENABLE="1"
 fi
 
 if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1" ]; then
@@ -2526,6 +2526,9 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
 		KEEP_UPDATE="0"
+	fi
+	if [ "$bak_smbpostconf" = "1" ]; then
+		grep -v '#' $S_DIR/smb.postconf.old | sed '/socket options/d;/deadtime/d;/strict locking/d;/^$/d' >> $S_DIR/smb.postconf
 	fi
 	chmod 755 $S_DIR/smb.postconf
 	service restart_nasapps >/dev/null 2>&1
@@ -2759,7 +2762,6 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postc
 	sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
-		KEEP_UPDATE="0"
 	fi
 	if [ -f $S_DIR/smb.postconf ]; then
 		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
@@ -2773,6 +2775,7 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postc
 	if [ "$KEEP_UPDATE" != "1" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postconf 2>/dev/null | wc -l)" -gt "0" ]; then
 		SC_DISABLE="$((SC_DISABLE + 1))"
 	fi
+	KEEP_UPDATE="0"
 else
 	SC_DISABLE="100"
 fi
@@ -2784,7 +2787,6 @@ if [ -f $S_DIR/post-mount ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 
 	sed -i '/^$/d' "$S_DIR/post-mount" 2>/dev/null
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
-		KEEP_UPDATE="0"
 	fi
 	if [ -f $S_DIR/post-mount ]; then
 		if [ "$(wc -l "$S_DIR/post-mount" 2>/dev/null | awk '{print $1}')" -le "1" ] || [ "$(grep -vc '#' "$S_DIR/post-mount")" -eq "0" ]; then
@@ -2800,6 +2802,7 @@ if [ -f $S_DIR/post-mount ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 
 	if [ "$KEEP_UPDATE" != "1" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 2>/dev/null | wc -l)" -gt "0" ]; then
 		SC_DISABLE="$((SC_DISABLE + 1))"
 	fi
+	KEEP_UPDATE="0"
 else
 	SC_DISABLE="100"
 fi
@@ -2825,10 +2828,6 @@ if [ -f $S_DIR/smb.postconf ]; then
 		nvram set jffs2_scripts="0"
 		nvram commit
 	fi
-fi
-
-if [ -f $S_DIR/smb.postconf.old ] && [ "$FORCE" = "1" ]; then
-	rm -f $S_DIR/smb.postconf.old
 fi
 
 if [ -f $S_DIR/post-mount ]; then
@@ -2886,6 +2885,10 @@ if [ "$SC_UNINSTALL" -gt "0" ]; then
 	SC_GLOBAL="8"
 fi
 
+if [ -f $S_DIR/smb.postconf.old ] && [ ! -f $S_DIR/smb.postconf ]; then
+	mv -f $S_DIR/smb.postconf.old $S_DIR/smb.postconf && chmod 755 $S_DIR/smb.postconf
+fi
+
 if [ "$QUIET" != "1" ]; then
 	if [ "$SC_UNINSTALL" -eq "0" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
@@ -2933,13 +2936,6 @@ if [ "$SC_NETWORK" -eq "0" ] || [ "$FORCE" = "1" ]; then
 	fi
 	if [ ! -f $UA_DIR/usbstatus.png ] || [ ! -f $UA_DIR/usbaccelerator.sh ]; then
 		SC_REINSTALL="$((SC_REINSTALL + 1))"
-	elif [ "$TRIG_RI_BY_USER" != "1" ] && [ "$need_to_reenable" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
-		sh $UA_DIR/usbaccelerator.sh --enable; exit "$?"
-	elif [ "$TRIG_RI_BY_USER" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
-		if [ "$need_to_reenable" = "1" ]; then
-			sed -i '/ENABLE_STATUS/d' "$UA_DIR/CONFIG" 2>/dev/null
-		fi
-		sh $UA_DIR/usbaccelerator.sh; exit "$?"
 	fi
 else
 	SC_REINSTALL="100"
@@ -2999,6 +2995,15 @@ if [ "$QUIET" != "1" ]; then
 			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
 		fi
 	fi
+fi
+
+if [ "$TRIG_RI_BY_USER" != "1" ] && [ "$need_to_reenable" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
+	sh $UA_DIR/usbaccelerator.sh --enable; exit "$?"
+elif [ "$TRIG_RI_BY_USER" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
+	if [ "$need_to_reenable" = "1" ]; then
+		sed -i '/ENABLE_STATUS/d' "$UA_DIR/CONFIG" 2>/dev/null
+	fi
+	sh $UA_DIR/usbaccelerator.sh; exit "$?"
 fi
 }
 
