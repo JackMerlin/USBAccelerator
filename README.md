@@ -14,7 +14,7 @@
 3. Add an icon in Web GUI to show the working status.
 
 ## Requirements
-* An Asus router with [Asuswrt-Merlin](https://asuswrt.lostrealm.ca/) 380 and higher or stock firmware 380 and higher.
+* An Asus router with [Asuswrt-Merlin](https://www.asuswrt-merlin.net/) 380 and higher or stock firmware 380 and higher.
 
 ## Supported Models
 * RT-AC66U_B1
