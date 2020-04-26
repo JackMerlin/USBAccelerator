@@ -14,18 +14,7 @@
 3. Add an icon in Web GUI to show the working status.
 
 ## Requirements
-* An Asus router with [Asuswrt-Merlin](https://www.asuswrt-merlin.net/) 380 and higher or stock firmware 380 and higher.
-
-## Supported Models
-* RT-AC66U_B1
-* RT-AC68U
-* RT-AC1900P
-* RT-AC3200
-* RT-AC86U
-* RT-AC87U
-* RT-AC88U
-* RT-AC5300
-* RT-AX88U
+* An Asus router with [Asuswrt-Merlin](https://www.asuswrt-merlin.net/) 380 and higher or Asuswrt firmware 380 and higher.
 
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
