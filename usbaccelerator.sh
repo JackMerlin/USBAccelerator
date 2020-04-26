@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                 Version 2.0-beta3.5.1                 ######
+######                 Version 2.0-beta3.5.2                 ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta3.5.1"
+VERSION="2.0-beta3.5.2"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -2156,7 +2156,7 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 		sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 			rm -f $S_DIR/smb.postconf
 		else
 			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
@@ -2488,7 +2488,7 @@ FORCE="0"
 
 Enable_Merlin() {
 if [ -f $S_DIR/smb.postconf ] && [ "$(grep -ci accelerator $S_DIR/smb.postconf 2>/dev/null)" = "0" ]; then
-	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
+	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 		rm -f $S_DIR/smb.postconf
 	else
 		mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
@@ -2504,11 +2504,13 @@ if [ -f $S_DIR/smb.postconf ]; then
 		sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -eq "0" ]; then
 			rm -f $S_DIR/smb.postconf
-		else
+		elif [ ! -s $S_DIR/smb.postconf.old ]; then
 			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
 			bak_smbpostconf="1"
+		else
+			grep -v '#' $S_DIR/smb.postconf >> $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
 		fi
 		FORCE_ENABLE="1"
 	fi
@@ -2534,7 +2536,7 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 	chmod 755 $S_DIR/smb.postconf
 	service restart_nasapps >/dev/null 2>&1
 	ck_smbd="0"
-	while [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -eq "0" ] && [ "$ck_smbd" -lt "5" ]; do
+	while [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -eq "0" ] && [ "$ck_smbd" -lt "5" ]; do
 		ck_smbd="$((ck_smbd + 1))"
 		sleep 1
 	done
@@ -2543,7 +2545,7 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 		ck_smbconf_2="$((ck_smbconf_2 + 1))"
 		sleep 1
 	done
-	if [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -gt "0" ] && [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ]; then
+	if [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -gt "0" ] && [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ]; then
 		SC_ENABLE="$((SC_ENABLE + 1))"
 	fi
 elif [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -gt "0" ]; then
@@ -2561,7 +2563,7 @@ fi
 
 Enable_Stock() {
 ck_smbd="0"
-while [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -eq "0" ] && [ "$ck_smbd" -lt "5" ]; do
+while [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -eq "0" ] && [ "$ck_smbd" -lt "5" ]; do
 	ck_smbd="$((ck_smbd + 1))"
 	sleep 1
 done
@@ -2579,13 +2581,13 @@ if [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" 
 		sed -i '/global/a\deadtime = 10' "/etc/smb.conf" 2>/dev/null
 		sed -i '/global/a\strict locking = no' "/etc/smb.conf" 2>/dev/null
 		echo "# USB_Accelerator_v$VERSION" >> /etc/smb.conf
-		if [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -gt "0" ]; then
+		if [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -gt "0" ]; then
 			killall -q smbd
 			killall -q nmbd
 			nmbd -D -s /etc/smb.conf 2>/dev/null
 			/usr/sbin/smbd -D -s /etc/smb.conf 2>/dev/null
 		fi
-		if [ "$(ps 2>/dev/null | grep smbd | grep -cv grep)" -gt "0" ] && [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ]; then
+		if [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -gt "0" ] && [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ]; then
 			SC_ENABLE="$((SC_ENABLE + 1))"
 		fi
 	fi
@@ -2618,7 +2620,6 @@ if [ ! -f $S_DIR/post-mount ] || [ "$(grep -i "USB_Accelerator_v$VERSION" $S_DIR
 	fi
 	if [ "$bak_postmount" = "1" ] && [ -s $S_DIR/post-mount.old ]; then
 		grep -v '#' $S_DIR/post-mount.old | sed '/^$/d' >> $S_DIR/post-mount
-		rm -f $S_DIR/post-mount.old
 	fi
 	chmod 755 $S_DIR/post-mount
 	nvram set script_usbmount="$S_DIR/post-mount"
@@ -2765,7 +2766,7 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postc
 		Enable_Auto_Update
 	fi
 	if [ -f $S_DIR/smb.postconf ]; then
-		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 			rm -f $S_DIR/smb.postconf
 		fi
 	fi
@@ -2822,7 +2823,7 @@ if [ -f $S_DIR/smb.postconf ]; then
 	sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG' "$S_DIR/smb.postconf")" -le "1" ]; then
+	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 		rm -f $S_DIR/smb.postconf
 	fi
 	if [ "$(awk -F'"' '/^ENABLE_JFFS_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
@@ -2834,10 +2835,12 @@ fi
 if [ -f $S_DIR/post-mount ]; then
 	sed -i '/[aA]ccelerator/d' "$S_DIR/post-mount" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/post-mount" 2>/dev/null
-	if [ "$(wc -l "$S_DIR/post-mount" 2>/dev/null | awk '{print $1}')" -le "1" ] || [ "$(grep -vc '#' "$S_DIR/post-mount" 2>/dev/null )" -eq "0" ] || [ "$(awk -F'"' '/^ENABLE_MOUNT_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ] || [ "$FORCE" = "1" ]; then
+	if [ "$(wc -l "$S_DIR/post-mount" 2>/dev/null | awk '{print $1}')" -le "1" ] || [ "$(grep -vc '#' "$S_DIR/post-mount" 2>/dev/null )" -eq "0" ]; then
+		rm -f $S_DIR/post-mount
+	fi
+	if [ "$(awk -F'"' '/^ENABLE_MOUNT_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 		nvram set script_usbmount=""
 		nvram commit
-		rm -f $S_DIR/post-mount
 	fi
 elif [ "$(nvram get script_usbmount 2>/dev/null | grep -c post-mount)" -gt "0" ]; then
 	nvram set script_usbmount=""
@@ -2890,6 +2893,10 @@ if [ -f $S_DIR/smb.postconf.old ] && [ ! -f $S_DIR/smb.postconf ]; then
 	mv -f $S_DIR/smb.postconf.old $S_DIR/smb.postconf && chmod 755 $S_DIR/smb.postconf
 fi
 
+if [ -f $S_DIR/post-mount.old ] && [ ! -f $S_DIR/post-mount ]; then
+	mv -f $S_DIR/post-mount.old $S_DIR/post-mount && chmod 755 $S_DIR/post-mount
+fi
+
 if [ "$QUIET" != "1" ]; then
 	if [ "$SC_UNINSTALL" -eq "0" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
@@ -2914,6 +2921,16 @@ SC_REINSTALL="0"
 
 Check_Network
 if [ "$SC_NETWORK" -eq "0" ] || [ "$FORCE" = "1" ]; then
+	if [ -s $UA_DIR/CONFIG ] && [ "$CLEAN_INSTALL" = "1" ]; then
+		if [ "$(awk -F'"' '/^ENABLE_JFFS_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
+			nvram set jffs2_scripts="0"
+			nvram commit
+		fi
+		if [ "$(awk -F'"' '/^ENABLE_MOUNT_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
+			nvram set script_usbmount=""
+			nvram commit
+		fi
+	fi
 	if [ -s $UA_DIR/CONFIG ] && [ "$CLEAN_INSTALL" != "1" ]; then
 		if [ "$(awk -F'"' '/^ENABLE_STATUS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 			need_to_reenable="1"
@@ -3003,6 +3020,11 @@ if [ "$TRIG_RI_BY_USER" != "1" ] && [ "$need_to_reenable" = "1" ] && [ "$SC_REIN
 elif [ "$TRIG_RI_BY_USER" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
 	if [ "$need_to_reenable" = "1" ]; then
 		sed -i '/ENABLE_STATUS/d' "$UA_DIR/CONFIG" 2>/dev/null
+	fi
+	if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
+		printf 'USB加速器已成功重新安装，正在重新载入...\n'
+	else
+		printf 'USB Accelerator reinstalled successfully, reloading...\n'
 	fi
 	sh $UA_DIR/usbaccelerator.sh; exit "$?"
 fi
