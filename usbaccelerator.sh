@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                 Version 2.0-beta3.5.2                 ######
+######                  Version 2.0-beta3.6                  ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta3.5.2"
+VERSION="2.0-beta3.6"
 RELEASE_TYPE="beta"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -703,12 +703,19 @@ while true; do
 				else
 					printf 'Setup is complete\n'
 				fi
+				if [ "$(awk -F'"' '/^AUTO_UPDATE_BY_USER=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "1" ]; then
+					sed -i '/AUTO_UPDATE_BY_USER/d' "$UA_DIR/CONFIG" 2>/dev/null
+					echo '' >> "$UA_DIR/CONFIG"
+					echo 'AUTO_UPDATE_BY_USER="1"' >> "$UA_DIR/CONFIG"
+					sed -i '/^$/d' "$UA_DIR/CONFIG"
+					chmod 644 $UA_DIR/CONFIG
+				fi
 				Update_Options_UI; break
 			else
 				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
-					printf '自动更新已经关闭，无须操作\n'
+					printf '自动更新已经开启，无须操作\n'
 				else
-					printf 'Auto-update is disabled\n'
+					printf 'Auto-update is enabled\n'
 				fi
 			fi
 		;;
@@ -1655,19 +1662,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  修复了下载组件的错误\n'
-	printf '  修复了启用禁用时的错误，感谢@thelonelycoder\n'
-	printf '  改善了与其他smb.postconf脚本兼容性，感谢@thelonelycoder\n'
+	printf '  改善了加速机制的核心代码以提高USB读写性能\n'
 	printf '\n  %b回车键%b  =  返回\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Fixed: When wget version is too low and does not support TLS 1.2,\n'
-	printf '  wget will not switch to curl even if curl is available.\n'
-	printf '  Fixed: bugs when enabling and disabling. thanks @thelonelycoder.\n'
-	printf '  Improved the compatibility of other scripts in smb.postconf. thanks\n'
-	printf '  @thelonelycoder.\n'
+	printf '  Changed the core code to increase the usb transfer speed\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -2428,8 +2429,10 @@ Check_Firmware
 Check_Directories
 
 if [ "$RELEASE_TYPE" = "stable" ]; then
-	if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
+	if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ] && [ "$(awk -F'"' '/^AUTO_UPDATE_BY_USER=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 		KEEP_UPDATE="1"
+	elif [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ] && [ "$(awk -F'"' '/^AUTO_UPDATE_BY_USER=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "1" ]; then
+		Disable_Auto_Update
 	fi
 elif [ -z "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" ] || [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 	KEEP_UPDATE="1"
@@ -2474,7 +2477,7 @@ if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
 		sed -i '/^$/d' "$UA_DIR/CONFIG"
 		chmod 644 $UA_DIR/CONFIG
 	fi
-	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ]; then
+	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ] && [ -s $UA_DIR/usbstatus.png ]; then
 		mount --bind $UA_DIR/usbstatus.png /www/images/New_ui/usbstatus.png
 	fi
 fi
@@ -2509,8 +2512,10 @@ if [ -f $S_DIR/smb.postconf ]; then
 		elif [ ! -s $S_DIR/smb.postconf.old ]; then
 			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
 			bak_smbpostconf="1"
-		else
-			grep -v '#' $S_DIR/smb.postconf >> $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+		elif [ -s $S_DIR/smb.postconf.old ]; then
+			grep -vf $S_DIR/smb.postconf.old $S_DIR/smb.postconf >> $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+			rm -f $S_DIR/smb.postconf
+			bak_smbpostconf="1"
 		fi
 		FORCE_ENABLE="1"
 	fi
@@ -2521,9 +2526,10 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 	echo '#!/bin/sh' > $S_DIR/smb.postconf
 	echo "# USB_Accelerator_v$VERSION" >> $S_DIR/smb.postconf
 	echo 'CONFIG=$1' >> $S_DIR/smb.postconf
-	echo 'sed -i "/socket options/d;/deadtime/d;/strict locking/d" "$CONFIG"' >> $S_DIR/smb.postconf
+	echo 'sed -i "/deadtime/d;/strict locking/d;/[aA]ccelerator/d" "$CONFIG"' >> $S_DIR/smb.postconf
 	echo 'sed -i "/global/a\deadtime = 10" "$CONFIG"' >> $S_DIR/smb.postconf
 	echo 'sed -i "/global/a\strict locking = no" "$CONFIG"' >> $S_DIR/smb.postconf
+	echo 'sed -i "s/socket options.*/socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE/g" "$CONFIG"' >> $S_DIR/smb.postconf
 	echo "echo '# USB_Accelerator_v$VERSION'"' >> "$CONFIG"' >> $S_DIR/smb.postconf
 	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> $S_DIR/smb.postconf
 	if [ "$KEEP_UPDATE" = "1" ]; then
@@ -2531,7 +2537,7 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 		KEEP_UPDATE="0"
 	fi
 	if [ "$bak_smbpostconf" = "1" ]; then
-		grep -v '#' $S_DIR/smb.postconf.old | sed '/CONFIG=$1/d;/socket options/d;/deadtime/d;/strict locking/d;/^$/d' >> $S_DIR/smb.postconf
+		grep -v '#' $S_DIR/smb.postconf.old | sed '/CONFIG=$1/d;/socket options/d;/deadtime/d;/strict locking/d;/[aA]ccelerator/d;/^$/d' >> $S_DIR/smb.postconf
 	fi
 	chmod 755 $S_DIR/smb.postconf
 	service restart_nasapps >/dev/null 2>&1
@@ -2753,7 +2759,7 @@ if [ "$QUIET" != "1" ]; then
 		fi
 	fi
 fi
-
+KEEP_UPDATE="0"
 FORCE="0"
 }
 
@@ -2777,7 +2783,6 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postc
 	if [ "$KEEP_UPDATE" != "1" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postconf 2>/dev/null | wc -l)" -gt "0" ]; then
 		SC_DISABLE="$((SC_DISABLE + 1))"
 	fi
-	KEEP_UPDATE="0"
 else
 	SC_DISABLE="100"
 fi
@@ -2804,7 +2809,6 @@ if [ -f $S_DIR/post-mount ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 
 	if [ "$KEEP_UPDATE" != "1" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 2>/dev/null | wc -l)" -gt "0" ]; then
 		SC_DISABLE="$((SC_DISABLE + 1))"
 	fi
-	KEEP_UPDATE="0"
 else
 	SC_DISABLE="100"
 fi
@@ -3099,6 +3103,10 @@ if [ "$SC_UPDATE" -eq "1" ]; then
 	echo "UPDATE_COMPLETED=\"$TIMESTAMP\"" >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
 	chmod 644 $UA_DIR/CONFIG
+	if [ "$(awk -F'"' '/^ENABLE_STATUS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
+		sh $UA_DIR/usbaccelerator.sh --quiet --disable
+		sh $UA_DIR/usbaccelerator.sh --enable; SC_GLOBAL="$?"
+	fi
 fi
 
 if [ "$QUIET" != "1" ]; then
