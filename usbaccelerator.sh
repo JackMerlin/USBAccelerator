@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                  Version 2.0-beta3.6                  ######
+######                    Version 2.0-rc1                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,8 +12,8 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-beta3.6"
-RELEASE_TYPE="beta"
+VERSION="2.0-rc1"
+RELEASE_TYPE="rc"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
 UA_DIR="$ADD_DIR/usbaccelerator"
@@ -1662,13 +1662,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  改善了加速机制的核心代码以提高USB读写性能\n'
+	printf '  第一个准正式版\n'
 	printf '\n  %b回车键%b  =  返回\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Changed the core code to increase the usb transfer speed\n'
+	printf '  First release candidate\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
