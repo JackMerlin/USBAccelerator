@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 2.0-rc1                    ######
+######                    Version 2.0-rc2                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-rc1"
+VERSION="2.0-rc2"
 RELEASE_TYPE="rc"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -1662,13 +1662,15 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  第一个准正式版\n'
-	printf '\n  %b回车键%b  =  返回\n' "$C_LG" "$C_RS"
+	printf '  改善图标加载速度\n'
+	printf '  改善检查网络的机制\n'
+	printf '\n  %b回车键%b  =  知道了\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  First release candidate\n'
+	printf '  Improve icon loading speed\n'
+	printf '  Improve the check network connection\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -1910,16 +1912,16 @@ fi
 }
 
 Check_Directories() {
-if [ ! -d $ADD_DIR ]; then
-	mkdir -m 755 $ADD_DIR 2>/dev/null
+if [ ! -d "$ADD_DIR" ]; then
+	mkdir -m 755 "$ADD_DIR" 2>/dev/null
 fi
 
-if [ ! -d $UA_DIR ]; then
-	mkdir -m 755 $UA_DIR 2>/dev/null
+if [ ! -d "$UA_DIR" ]; then
+	mkdir -m 755 "$UA_DIR" 2>/dev/null
 fi
 
-if [ ! -d $S_DIR ]; then
-	mkdir -m 755 $S_DIR 2>/dev/null
+if [ ! -d "$S_DIR" ]; then
+	mkdir -m 755 "$S_DIR" 2>/dev/null
 fi
 }
 
@@ -1984,16 +1986,19 @@ SC_NETWORK="0"
 
 if [ "$TRIG_CKNT_BY_USER" != "1" ]; then
 	cknet="0"
-	while [ "$(nvram get ntp_ready)" = "0" ] && [ "$cknet" -lt "150" ]; do
-		cknet="$((cknet + 1))"
-		sleep 1
-		if [ -n "$(nvram get dns_probe_host)" ] && [ -n "$(nvram get dns_probe_content)" ] && [ "$cknet" -gt "20" ]; then
-			rm_ipadr="$(nslookup "$(nvram get dns_probe_host)" 2>/dev/null | grep -A1 'Name' | grep -v 'Name' | awk '{print $3}')"
-			lc_ipadr1="$(nvram get dns_probe_content | awk '{print $1}')"
-			lc_ipadr2="$(nvram get dns_probe_content | awk '{print $2}')"
-			if [ "$rm_ipadr" = "$lc_ipadr1" ] || [ "$rm_ipadr" = "$lc_ipadr2" ]; then
-				cknet="$((cknet + 1000))"
-			fi
+	rm_host="$(nvram get dns_probe_host 2>/dev/null)"
+	lc_ipadr1="$(nvram get dns_probe_content 2>/dev/null | awk '{print $1}')"
+	lc_ipadr2="$(nvram get dns_probe_content 2>/dev/null | awk '{print $2}')"
+	while [ "$cknet" -lt "150" ]; do
+		if [ "$(nvram get ntp_ready 2>/dev/null)" = "0" ]; then
+			cknet="$((cknet + 1000))"
+		elif [ "$(nvram get link_internet 2>/dev/null)" = "2" ]; then
+			cknet="$((cknet + 1000))"
+		elif [ "$(nslookup "$rm_host" 2>/dev/null | grep -A1 'Name' | grep -v 'Name' | awk '{print $3}')" = "$lc_ipadr1" ] || [ "$(nslookup "$rm_host" 2>/dev/null | grep -A1 'Name' | grep -v 'Name' | awk '{print $3}')" = "$lc_ipadr2" ]; then
+			cknet="$((cknet + 1000))"
+		else
+			cknet="$((cknet + 1))"
+			sleep 1
 		fi
 	done
 	if [ "$cknet" -ge "149" ] && [ "$cknet" -le "999" ]; then
@@ -2002,7 +2007,9 @@ if [ "$TRIG_CKNT_BY_USER" != "1" ]; then
 	if [ "$cknet" -ge "1000" ]; then
 		SC_NETWORK="0"
 	fi
-elif [ "$(nvram get ntp_ready)" = "0" ]; then
+elif [ "$(nvram get ntp_ready 2>/dev/null)" = "0" ]; then
+	SC_NETWORK="1"
+elif [ "$(nvram get link_internet 2>/dev/null)" = "2" ]; then
 	SC_NETWORK="1"
 fi
 
@@ -2157,7 +2164,7 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 		sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 			rm -f $S_DIR/smb.postconf
 		else
 			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
@@ -2478,7 +2485,13 @@ if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
 		chmod 644 $UA_DIR/CONFIG
 	fi
 	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ] && [ -s $UA_DIR/usbstatus.png ]; then
-		mount --bind $UA_DIR/usbstatus.png /www/images/New_ui/usbstatus.png
+		if [ ! -d /tmp/usbaccelerator ]; then
+			mkdir -m 755 /tmp/usbaccelerator
+		fi
+		if [ ! -s /tmp/usbaccelerator/usbstatus.png ]; then
+			cp -f $UA_DIR/usbstatus.png /tmp/usbaccelerator/usbstatus.png && chmod 644 /tmp/usbaccelerator/usbstatus.png
+		fi
+		mount --bind /tmp/usbaccelerator/usbstatus.png /www/images/New_ui/usbstatus.png
 	fi
 fi
 
@@ -2490,24 +2503,19 @@ FORCE="0"
 }
 
 Enable_Merlin() {
-if [ -f $S_DIR/smb.postconf ] && [ "$(grep -ci accelerator $S_DIR/smb.postconf 2>/dev/null)" = "0" ]; then
-	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
-		rm -f $S_DIR/smb.postconf
-	else
-		mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
-	fi
-	FORCE_ENABLE="1"
-	bak_smbpostconf="1"
-fi
-
 if [ -f $S_DIR/smb.postconf ]; then
-	if [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
-		sed -i '0,/CONFIG/{//d;}' "$S_DIR/smb.postconf" 2>/dev/null
-		sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
-		sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
-		sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
-		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -eq "0" ]; then
+	if [ "$(grep -ci accelerator $S_DIR/smb.postconf 2>/dev/null)" != "0" ]; then
+		if [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
+			sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf"
+			sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf"
+			sed -i '/sleep 10/d' "$S_DIR/smb.postconf"
+			sed -i '/^$/d' "$S_DIR/smb.postconf"
+		else
+			dontchange_smbpostconf="1"
+		fi
+	fi
+	if [ "$dontchange_smbpostconf" != "1" ]; then
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 			rm -f $S_DIR/smb.postconf
 		elif [ ! -s $S_DIR/smb.postconf.old ]; then
 			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
@@ -2772,12 +2780,13 @@ if [ -f $S_DIR/smb.postconf ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postc
 		Enable_Auto_Update
 	fi
 	if [ -f $S_DIR/smb.postconf ]; then
-		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
+		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 			rm -f $S_DIR/smb.postconf
 		fi
 	fi
 	if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
 		umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
+		rm -rf "/tmp/usbaccelerator"
 	fi
 	service restart_nasapps >/dev/null 2>&1
 	if [ "$KEEP_UPDATE" != "1" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postconf 2>/dev/null | wc -l)" -gt "0" ]; then
@@ -2804,6 +2813,7 @@ if [ -f $S_DIR/post-mount ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 
 	fi
 	if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
 		umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
+		rm -rf "/tmp/usbaccelerator"
 	fi
 	service restart_nasapps >/dev/null 2>&1
 	if [ "$KEEP_UPDATE" != "1" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 2>/dev/null | wc -l)" -gt "0" ]; then
@@ -2827,7 +2837,7 @@ if [ -f $S_DIR/smb.postconf ]; then
 	sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
-	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'ONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
+	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 		rm -f $S_DIR/smb.postconf
 	fi
 	if [ "$(awk -F'"' '/^ENABLE_JFFS_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
@@ -2860,11 +2870,14 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 fi
 
 if [ -d "$UA_DIR" ] || [ "$FORCE" = "1" ]; then
+	if [ -d "/tmp/usbaccelerator" ] || [ "$FORCE" = "1" ]; then
+		rm -rf "/tmp/usbaccelerator"
+	fi
 	rm -f "$UA_DIR/usbstatus.png" "$UA_DIR/CONFIG" "$UA_DIR/usbaccelerator.sh"
 	rm -rf "$UA_DIR" 2>/dev/null
 	Check_Firmware
 	if [ "$(ls -A $ADD_DIR 2>/dev/null | wc -l)" = "0" ] && [ "$FWTYPE" != "384M" ]; then
-		rm -rf $ADD_DIR 2>/dev/null
+		rm -rf "$ADD_DIR" 2>/dev/null
 	fi
 	service restart_nasapps >/dev/null 2>&1
 fi
@@ -3112,11 +3125,11 @@ fi
 if [ "$QUIET" != "1" ]; then
 	if [ "$SC_UPDATE" -eq "1" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
-			logger -t "USB加速器" "USB加速器已经成功更新到v$NEW_VERSION"
+			logger -t "USB加速器" "USB加速器已经成功从v$VERSION更新到v$NEW_VERSION"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
 			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
 		else
-			logger -t "USB Accelerator" "The USB Accelerator has been successfully updated to v$NEW_VERSION"
+			logger -t "USB Accelerator" "The USB Accelerator has been successfully updated from v$VERSION to v$NEW_VERSION"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
 			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
 		fi
