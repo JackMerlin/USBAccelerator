@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 2.0-rc2                    ######
+######                    Version 2.0-rc3                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-rc2"
+VERSION="2.0-rc3"
 RELEASE_TYPE="rc"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -1662,15 +1662,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  改善图标加载速度\n'
-	printf '  改善检查网络的机制\n'
+	printf '  改进稳定性\n'
 	printf '\n  %b回车键%b  =  知道了\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Improve icon loading speed\n'
-	printf '  Improve the check network connection\n'
+	printf '  Improves stability\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -1994,8 +1992,11 @@ if [ "$TRIG_CKNT_BY_USER" != "1" ]; then
 			cknet="$((cknet + 1000))"
 		elif [ "$(nvram get link_internet 2>/dev/null)" = "2" ]; then
 			cknet="$((cknet + 1000))"
-		elif [ "$(nslookup "$rm_host" 2>/dev/null | grep -A1 'Name' | grep -v 'Name' | awk '{print $3}')" = "$lc_ipadr1" ] || [ "$(nslookup "$rm_host" 2>/dev/null | grep -A1 'Name' | grep -v 'Name' | awk '{print $3}')" = "$lc_ipadr2" ]; then
-			cknet="$((cknet + 1000))"
+		elif [ -n "$rm_host" ] && [ -n "$lc_ipadr1" ] && [ -n "$lc_ipadr2" ]; then
+			rm_ipadr="$(nslookup "$rm_host" 2>/dev/null | grep -A1 'Name' | grep -v 'Name' | awk '{print $3}')"
+			if [ "$rm_ipadr" = "$lc_ipadr1" ] || [ "$rm_ipadr" = "$lc_ipadr2" ]; then
+				cknet="$((cknet + 1000))"
+			fi
 		else
 			cknet="$((cknet + 1))"
 			sleep 1
@@ -2308,6 +2309,9 @@ SC_DOWNLOAD="0"
 
 if [ -z "$SRC" ]; then
 	Check_Source
+	if [ "$SC_SETSOURCE" = "1" ]; then
+		SRC="$SRC_1"
+	fi
 fi
 
 Check_Model
