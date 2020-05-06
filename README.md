@@ -44,7 +44,7 @@ In the Asuswrt router, the default settings do not give you the best USB perform
 ## Installation
 Using an SSH client to login to your router, then copy and paste the following command:
 ```Shell
-/usr/sbin/wget -c -T 30 --no-check-certificate "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/master/usbaccelerator.sh" -O "/tmp/usbaccelerator.sh" && chmod 755 /tmp/usbaccelerator.sh && sh /tmp/usbaccelerator.sh
+/usr/sbin/wget -c -T 30 --no-check-certificate "https://raw.githubusercontent.com/JackMerlin/USBAccelerator/v1.0/usbaccelerator.sh" -O "/tmp/usbaccelerator.sh" && chmod 755 /tmp/usbaccelerator.sh && sh /tmp/usbaccelerator.sh
 ```
 Don't forget to press Enter key ;)
 
