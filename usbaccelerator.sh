@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 2.0-rc3                    ######
+######                    Version 2.0-rc4                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-rc3"
+VERSION="2.0-rc4"
 RELEASE_TYPE="rc"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -1662,13 +1662,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  改进稳定性\n'
+	printf '  已修复检查网络的错误\n'
 	printf '\n  %b回车键%b  =  知道了\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Improves stability\n'
+	printf '  Fixed an issue with the check network connection\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -1988,7 +1988,7 @@ if [ "$TRIG_CKNT_BY_USER" != "1" ]; then
 	lc_ipadr1="$(nvram get dns_probe_content 2>/dev/null | awk '{print $1}')"
 	lc_ipadr2="$(nvram get dns_probe_content 2>/dev/null | awk '{print $2}')"
 	while [ "$cknet" -lt "150" ]; do
-		if [ "$(nvram get ntp_ready 2>/dev/null)" = "0" ]; then
+		if [ "$(nvram get ntp_ready 2>/dev/null)" = "1" ]; then
 			cknet="$((cknet + 1000))"
 		elif [ "$(nvram get link_internet 2>/dev/null)" = "2" ]; then
 			cknet="$((cknet + 1000))"
@@ -2009,9 +2009,9 @@ if [ "$TRIG_CKNT_BY_USER" != "1" ]; then
 		SC_NETWORK="0"
 	fi
 elif [ "$(nvram get ntp_ready 2>/dev/null)" = "0" ]; then
-	SC_NETWORK="1"
-elif [ "$(nvram get link_internet 2>/dev/null)" = "2" ]; then
-	SC_NETWORK="1"
+	if [ "$(nvram get link_internet 2>/dev/null)" != "2" ]; then
+		SC_NETWORK="1"
+	fi
 fi
 
 if [ "$SC_NETWORK" -gt "0" ]; then
@@ -2488,15 +2488,6 @@ if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
 		sed -i '/^$/d' "$UA_DIR/CONFIG"
 		chmod 644 $UA_DIR/CONFIG
 	fi
-	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ] && [ -s $UA_DIR/usbstatus.png ]; then
-		if [ ! -d /tmp/usbaccelerator ]; then
-			mkdir -m 755 /tmp/usbaccelerator
-		fi
-		if [ ! -s /tmp/usbaccelerator/usbstatus.png ]; then
-			cp -f $UA_DIR/usbstatus.png /tmp/usbaccelerator/usbstatus.png && chmod 644 /tmp/usbaccelerator/usbstatus.png
-		fi
-		mount --bind /tmp/usbaccelerator/usbstatus.png /www/images/New_ui/usbstatus.png
-	fi
 fi
 
 if [ "$QUIET" != "1" ]; then
@@ -2509,7 +2500,7 @@ FORCE="0"
 Enable_Merlin() {
 if [ -f $S_DIR/smb.postconf ]; then
 	if [ "$(grep -ci accelerator $S_DIR/smb.postconf 2>/dev/null)" != "0" ]; then
-		if [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/smb.postconf 2>/dev/null | wc -l)" = "0" ]; then
+		if [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ]; then
 			sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf"
 			sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf"
 			sed -i '/sleep 10/d' "$S_DIR/smb.postconf"
@@ -2553,6 +2544,9 @@ if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1"
 	fi
 	chmod 755 $S_DIR/smb.postconf
 	service restart_nasapps >/dev/null 2>&1
+fi
+
+if [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" -eq "0" ]; then
 	ck_smbd="0"
 	while [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -eq "0" ] && [ "$ck_smbd" -lt "5" ]; do
 		ck_smbd="$((ck_smbd + 1))"
@@ -2655,6 +2649,15 @@ fi
 
 Enable_Notifications() {
 if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
+	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ] && [ -s $UA_DIR/usbstatus.png ]; then
+		if [ ! -d /tmp/usbaccelerator ]; then
+			mkdir -m 755 /tmp/usbaccelerator
+		fi
+		if [ ! -s /tmp/usbaccelerator/usbstatus.png ]; then
+			cp -f $UA_DIR/usbstatus.png /tmp/usbaccelerator/usbstatus.png && chmod 644 /tmp/usbaccelerator/usbstatus.png
+		fi
+		mount --bind /tmp/usbaccelerator/usbstatus.png /www/images/New_ui/usbstatus.png
+	fi
 	if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 		logger -t "USB加速器" "USB加速器v$VERSION成功开启 (状态码:$SC_ENABLE-$SC_GLOBAL)"
 		logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
