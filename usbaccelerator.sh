@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 2.0-rc4                    ######
+######                    Version 2.0-rc5                    ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-rc4"
+VERSION="2.0-rc5"
 RELEASE_TYPE="rc"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -55,7 +55,7 @@ if [ -z "$(awk -F'"' '/^ENABLE_STATUS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)"
 	Check_Model
 fi
 
-if [ "$FWTYPE" = "384M" ] &&  [ "$HND_MODEL" = "1" ] && [ "$(awk -F'"' '/^IGNORED_CKFWHW=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "1" ]; then
+if [ "$FWTYPE" = "384M" ] && [ "$HND_MODEL" = "1" ] && [ "$(awk -F'"' '/^IGNORED_CKFWHW=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "1" ]; then
 	printf '___________________________________________________________________\n'
 	if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 		printf '你所使用的硬件和固件已经具备较好的性能，继续使用可能无法打破瓶颈\n'
@@ -113,6 +113,7 @@ if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
 	else
 		printf 'Please wait while the download is starting...\n'
 	fi
+	TRIG_CKNT_BY_USER="1"
 	Check_Files
 	if [ "$SC_CKFILES" -eq "1" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
@@ -1662,13 +1663,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  已修复检查网络的错误\n'
+	printf '  提高稳定性\n'
 	printf '\n  %b回车键%b  =  知道了\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Fixed an issue with the check network connection\n'
+	printf '  Improved stability\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -2167,8 +2168,11 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
 		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
 			rm -f $S_DIR/smb.postconf
-		else
+		elif [ ! -s $S_DIR/smb.postconf.old ]; then
 			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+		elif [ -s $S_DIR/smb.postconf.old ]; then
+			grep -vf $S_DIR/smb.postconf.old $S_DIR/smb.postconf >> $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+			rm -f $S_DIR/smb.postconf
 		fi
 	fi
 	if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
