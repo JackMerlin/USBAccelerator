@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                    Version 2.0-rc5                    ######
+######                      Version 2.0                      ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,8 +12,8 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0-rc5"
-RELEASE_TYPE="rc"
+VERSION="2.0"
+RELEASE_TYPE="stable"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
 UA_DIR="$ADD_DIR/usbaccelerator"
@@ -1612,7 +1612,7 @@ done
 }
 
 Thanks_List() {
-thx_names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul,\n特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119,\n全池泼洒, glk17, luoyulong, kimhai, xiaole51, vipnetant, vvwn'
+thx_names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul,\n特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119,\n全池泼洒, glk17, luoyulong, kimhai, xiaole51, vipnetant, vvwn,\nyzjjbb, pizza7711, xmasrain, xiaolu2018, VwEI, dantewsj, Allen,\nliujc139, a13147, JIN730, masyaf1990, xwb025, thelonelycoder'
 printf '___________________________________________________________________\n'
 if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b特别感谢:%b\n(排名不分先后)\n' "$C_LY" "$C_RS"
@@ -1663,13 +1663,13 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  提高稳定性\n'
+	printf '  正式版发布\n'
 	printf '\n  %b回车键%b  =  知道了\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Improved stability\n'
+	printf '  Released stable version\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -2665,11 +2665,11 @@ if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
 	if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 		logger -t "USB加速器" "USB加速器v$VERSION成功开启 (状态码:$SC_ENABLE-$SC_GLOBAL)"
 		logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-		logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+		logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 	else
 		logger -t "USB Accelerator" "USB Accelerator v$VERSION starts successfully (Status Code:$SC_ENABLE-$SC_GLOBAL)"
 		logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-		logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+		logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 	fi
 fi
 
@@ -2679,13 +2679,13 @@ if [ "$SC_ENABLE" -gt "0" ] && [ "$SC_ENABLE" -lt "100" ]; then
 		logger -st "USB加速器" "你可以向开发人员反馈此代码以帮助解决这个错误:"
 		logger -st "USB加速器" "ERROR:$R_M-$FWVER-$VERSION-$SC_ENABLE-$SC_GLOBAL"
 		logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-		logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+		logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 	else
 		logger -st "USB Accelerator" "It looks like the USB Accelerator failed to start :("
 		logger -st "USB Accelerator" "Please report this code to the developer for help resolve this issue:"
 		logger -st "USB Accelerator" "ERROR:$R_M-$FWVER-$VERSION-$SC_ENABLE-$SC_GLOBAL"
 		logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-		logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+		logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 	fi
 fi
 
@@ -2748,11 +2748,11 @@ if [ "$QUIET" != "1" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 			logger -t "USB加速器" "USB加速器v$VERSION已关闭 (状态码:$SC_DISABLE-$SC_GLOBAL)"
 			logger -t "USB加速器" "如果你需要重新开启USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			logger -t "USB Accelerator" "USB Accelerator v$VERSION disabled successfully (Status Code:$SC_DISABLE-$SC_GLOBAL)"
 			logger -t "USB Accelerator" "If you want to re-enable the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_DISABLE" -gt "0" ] && [ "$SC_DISABLE" -lt "100" ]; then
@@ -2761,13 +2761,13 @@ if [ "$QUIET" != "1" ]; then
 			logger -st "USB加速器" "你可以向开发人员反馈此代码以帮助解决这个错误:"
 			logger -st "USB加速器" "ERROR:$R_M-$FWVER-$VERSION-$SC_DISABLE-$SC_GLOBAL"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			logger -st "USB Accelerator" "Disable the USB Accelerator failed :("
 			logger -st "USB Accelerator" "Please report this code to the developer for help resolve this issue:"
 			logger -st "USB Accelerator" "ERROR:$R_M-$FWVER-$VERSION-$SC_DISABLE-$SC_GLOBAL"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_DISABLE" -eq "1000" ]; then
@@ -3000,11 +3000,11 @@ if [ "$QUIET" != "1" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 			logger -t "USB加速器" "USB加速器v$VERSION已成功重新安装 (状态码:$SC_REINSTALL-$SC_GLOBAL)"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			logger -t "USB Accelerator" "USB Accelerator v$VERSION has been reinstalled (Status Code:$SC_REINSTALL-$SC_GLOBAL)"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_REINSTALL" -eq "100" ]; then
@@ -3014,14 +3014,14 @@ if [ "$QUIET" != "1" ]; then
 			Error_Notifications
 			logger -st "USB加速器" "ERROR:$R_M-$FWVER-$VERSION-$SC_NETWORK-$SC_REINSTALL-$SC_GLOBAL"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			ERROR_NETWORK="1"
 			ERROR_SOURCE="Reinstall"
 			Error_Notifications
 			logger -st "USB Accelerator" "ERROR:$R_M-$FWVER-$VERSION-$SC_NETWORK-$SC_REINSTALL-$SC_GLOBAL"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_REINSTALL" -eq "1000" ]; then
@@ -3031,14 +3031,14 @@ if [ "$QUIET" != "1" ]; then
 			Error_Notifications
 			logger -st "USB加速器" "ERROR:$R_M-$FWVER-$VERSION-$SC_DOWNLOAD-$SC_REINSTALL-$SC_GLOBAL"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			ERROR_DOWNLOAD="1"
 			ERROR_SOURCE="Reinstall"
 			Error_Notifications
 			logger -st "USB Accelerator" "ERROR:$R_M-$FWVER-$VERSION-$SC_DOWNLOAD-$SC_REINSTALL-$SC_GLOBAL"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 fi
@@ -3138,11 +3138,11 @@ if [ "$QUIET" != "1" ]; then
 		if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 			logger -t "USB加速器" "USB加速器已经成功从v$VERSION更新到v$NEW_VERSION"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			logger -t "USB Accelerator" "The USB Accelerator has been successfully updated from v$VERSION to v$NEW_VERSION"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_UPDATE" -eq "2" ]; then
@@ -3152,14 +3152,14 @@ if [ "$QUIET" != "1" ]; then
 			Error_Notifications
 			logger -st "USB加速器" "ERROR:$R_M-$FWVER-$VERSION-$SC_NETWORK-$SC_UPDATE-$SC_GLOBAL"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			ERROR_NETWORK="1"
 			ERROR_SOURCE="Update"
 			Error_Notifications
 			logger -st "USB Accelerator" "ERROR:$R_M-$FWVER-$VERSION-$SC_NETWORK-$SC_UPDATE-$SC_GLOBAL"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_UPDATE" -eq "3" ]; then
@@ -3169,14 +3169,14 @@ if [ "$QUIET" != "1" ]; then
 			Error_Notifications
 			logger -st "USB加速器" "ERROR:$R_M-$FWVER-$VERSION-$SC_DOWNLOAD-$SC_UPDATE-$SC_GLOBAL"
 			logger -t "USB加速器" "如果你需要管理USB加速器，请在SSH中输入下方内容:"
-			logger -t "USB加速器" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB加速器" "sh $UA_DIR/usbaccelerator.sh"
 		else
 			ERROR_DOWNLOAD="1"
 			ERROR_SOURCE="Update"
 			Error_Notifications
 			logger -st "USB Accelerator" "ERROR:$R_M-$FWVER-$VERSION-$SC_DOWNLOAD-$SC_UPDATE-$SC_GLOBAL"
 			logger -t "USB Accelerator" "If you want to control the USB Accelerator, enter below in SSH:"
-			logger -t "USB Accelerator" "$UA_DIR/usbaccelerator.sh"
+			logger -t "USB Accelerator" "sh $UA_DIR/usbaccelerator.sh"
 		fi
 	fi
 	if [ "$SC_UPDATE" -eq "4" ]; then
@@ -3415,7 +3415,6 @@ case "$PARM_1" in
 	-e|--enable)
 		Check_Files
 		Enable
-		Clear_Old
 	;;
 	-f|--force)
 		FORCE="1"
