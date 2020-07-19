@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                      Version 2.0                      ######
+######                     Version 2.0.1                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0"
+VERSION="2.0.1"
 RELEASE_TYPE="stable"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -86,7 +86,7 @@ if [ "$FWTYPE" = "384M" ] && [ "$HND_MODEL" = "1" ] && [ "$(awk -F'"' '/^IGNORED
 				echo '' >> "$UA_DIR/CONFIG"
 				echo 'IGNORED_CKFWHW="1"' >> "$UA_DIR/CONFIG"
 				sed -i '/^$/d' "$UA_DIR/CONFIG"
-				chmod 644 $UA_DIR/CONFIG
+				chmod 644 "$UA_DIR/CONFIG"
 				break
 			;;
 			n|N)
@@ -107,7 +107,7 @@ if [ "$FWTYPE" = "384M" ] && [ "$HND_MODEL" = "1" ] && [ "$(awk -F'"' '/^IGNORED
 	done
 fi
 
-if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
+if [ ! -f "$UA_DIR/usbaccelerator.sh" ] || [ ! -f "$UA_DIR/usbstatus.png" ]; then
 	if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 		printf '正在准备为你下载文件，请稍等...\n'
 	else
@@ -121,12 +121,12 @@ if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
 		else
 			printf 'Download successful, reloading...\n'
 		fi
-		sh $UA_DIR/usbaccelerator.sh; SC_GLOBAL="$?"; rm -f /tmp/usbaccelerator.sh; exit "$SC_GLOBAL"
+		sh "$UA_DIR/usbaccelerator.sh"; SC_GLOBAL="$?"; rm -f /tmp/usbaccelerator.sh; exit "$SC_GLOBAL"
 	fi
 	if [ "$SC_CKFILES" -gt "1" ] && [ "$DONT_DL" != "1" ]; then
 		Download_Files_UI
-		if [ "$SC_DOWNLOAD" = "0" ] && [ -f $UA_DIR/usbaccelerator.sh ] && [ -f $UA_DIR/usbstatus.png ]; then
-			sh $UA_DIR/usbaccelerator.sh; SC_GLOBAL="$?"; rm -f /tmp/usbaccelerator.sh; exit "$SC_GLOBAL"
+		if [ "$SC_DOWNLOAD" = "0" ] && [ -f "$UA_DIR/usbaccelerator.sh" ] && [ -f "$UA_DIR/usbstatus.png" ]; then
+			sh "$UA_DIR/usbaccelerator.sh"; SC_GLOBAL="$?"; rm -f /tmp/usbaccelerator.sh; exit "$SC_GLOBAL"
 		else
 			if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 				printf '%b注意%b:所需文件未找到，无法顺利开启，建议手动重新安装\n' "$C_LR" "$C_RS"
@@ -662,7 +662,7 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 		printf '  %b3  =  开启自动更新%b\n' "$C_LB" "$C_RS"
 		printf '  %b4%b  =  关闭自动更新\n' "$C_LG" "$C_RS"
 	fi
-	if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
+	if [ ! -f "$UA_DIR/usbaccelerator.sh" ] || [ ! -f "$UA_DIR/usbstatus.png" ]; then
 		printf '  %b5%b  =  下载缺失的文件\n' "$C_LG" "$C_RS"
 	fi
 	printf '  %b0%b  =  返回\n' "$C_LG" "$C_RS"
@@ -677,7 +677,7 @@ else
 		printf '  %b3  =  Enable Auto-update%b\n' "$C_LB" "$C_RS"
 		printf '  %b4%b  =  Disable Auto-update\n' "$C_LG" "$C_RS"
 	fi
-	if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
+	if [ ! -f "$UA_DIR/usbaccelerator.sh" ] || [ ! -f "$UA_DIR/usbstatus.png" ]; then
 		printf '  %b5%b  =  Download Missing File(s)\n' "$C_LG" "$C_RS"
 	fi
 	printf '  %b0%b  =  Return to Control Panel\n' "$C_LG" "$C_RS"
@@ -709,7 +709,7 @@ while true; do
 					echo '' >> "$UA_DIR/CONFIG"
 					echo 'AUTO_UPDATE_BY_USER="1"' >> "$UA_DIR/CONFIG"
 					sed -i '/^$/d' "$UA_DIR/CONFIG"
-					chmod 644 $UA_DIR/CONFIG
+					chmod 644 "$UA_DIR/CONFIG"
 				fi
 				Update_Options_UI; break
 			else
@@ -738,7 +738,7 @@ while true; do
 			fi
 		;;
 		5)
-			if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
+			if [ ! -f "$UA_DIR/usbaccelerator.sh" ] || [ ! -f "$UA_DIR/usbstatus.png" ]; then
 				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 					printf '正在准备为你下载文件，请稍等...\n'
 				else
@@ -883,7 +883,7 @@ if [ "$SC_UPDATE" -eq "1" ]; then
 	read -r "upd_menu1"
 	case "$upd_menu1" in
 		*)
-			sh $UA_DIR/usbaccelerator.sh; exit "$?"
+			sh "$UA_DIR/usbaccelerator.sh"; exit "$?"
 		;;
 	esac
 fi
@@ -1262,7 +1262,7 @@ while true; do
 					echo '' >> "$UA_DIR/CONFIG"
 					echo 'USB_MODE="2_0"' >> "$UA_DIR/CONFIG"
 					sed -i '/^$/d' "$UA_DIR/CONFIG"
-					chmod 644 $UA_DIR/CONFIG
+					chmod 644 "$UA_DIR/CONFIG"
 				fi
 				if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then printf '已经更改，你可能需要重新启动路由器才能应用修改\n'; else printf 'Change complete, you may need to reboot the router\n'; fi
 				break
@@ -1364,7 +1364,7 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 else
 	printf '%bRead Documents%b\n' "$C_Y" "$C_RS"
 	printf '\n  %b1%b  =  View Splash Page\n' "$C_LG" "$C_RS"
-	printf '  %b2%b  =  View Acknowledgement List\n' "$C_LG" "$C_RS"
+	printf '  %b2%b  =  View Acknowledgments\n' "$C_LG" "$C_RS"
 	printf '  %b3%b  =  View What%ss New\n' "$C_LG" "$C_RS" "'"
 	printf '  %b0%b  =  Return to Control Panel\n' "$C_LG" "$C_RS"
 fi
@@ -1574,7 +1574,7 @@ while true; do
 				echo '' >> "$UA_DIR/CONFIG"
 				echo "FIRST_TIME=\"$TIMESTAMP\"" >> "$UA_DIR/CONFIG"
 				sed -i '/^$/d' "$UA_DIR/CONFIG"
-				chmod 644 $UA_DIR/CONFIG
+				chmod 644 "$UA_DIR/CONFIG"
 				FIRST_TIME="$(awk -F'"' '/^FIRST_TIME=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)"
 			fi
 			Check_Source
@@ -1612,7 +1612,7 @@ done
 }
 
 Thanks_List() {
-thx_names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul,\n特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119,\n全池泼洒, glk17, luoyulong, kimhai, xiaole51, vipnetant, vvwn,\nyzjjbb, pizza7711, xmasrain, xiaolu2018, VwEI, dantewsj, Allen,\nliujc139, a13147, JIN730, masyaf1990, xwb025, thelonelycoder'
+thx_names='nyanmisaka, qiutian128, iphone8, pmc_griffon, tzh5278, samsul,\n特纳西特基欧, dbslsy, ricky1992, awee, Master, lesliesu255, zk0119,\n全池泼洒, glk17, luoyulong, kimhai, xiaole51, vipnetant, vvwn,\nyzjjbb, pizza7711, xmasrain, xiaolu2018, VwEI, dantewsj, Allen,\nliujc139, a13147, JIN730, masyaf1990, xwb025, thelonelycoder,\nSkrell, 921_j, jsyl1221, TNTcraft'
 printf '___________________________________________________________________\n'
 if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b特别感谢:%b\n(排名不分先后)\n' "$C_LY" "$C_RS"
@@ -1628,7 +1628,7 @@ else
 	printf 'Koolshare\n'
 	printf '52asus\n'
 	printf '\n%bThese members for taking the time to help test and feedback\nWithout them, there might not be this great script, thanks all%b\n(names not listed in order)\n' "$C_LY" "$C_RS"
-	printf '%b\nand more.\n' "$thx_names"
+	printf '%b and more.\n' "$thx_names"
 	printf '\n  %b0%b  =  Return to Previous Page\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________'
@@ -1663,13 +1663,17 @@ if [ "$LANG" = "CN" ] || [ "$LANG" = "TW" ]; then
 	printf '%b新版变化%b\n' "$C_Y" "$C_RS"
 	printf '  若要浏览历史发行信息，请访问:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB加速器v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  正式版发布\n'
+	printf '  已修复在特定固件下无法顺利启用的问题\n'
+	printf '  提高稳定性\n'
+	printf '  更新致谢名单\n'
 	printf '\n  %b回车键%b  =  知道了\n' "$C_LG" "$C_RS"
 else
 	printf '%bWhat%ss New%b\n' "$C_Y" "'" "$C_RS"
 	printf '  If you want to view the release history,\n  please go to our project homepage:\n  %b\n' "$HOST_HOME_1"
 	printf '\n%bUSB Accelerator v%b%b\n' "$C_LC" "$VERSION" "$C_RS"
-	printf '  Released stable version\n'
+	printf '  Fixed an issue that did not work on some firmware\n'
+	printf '  Improved stability\n'
+	printf '  Updated thanks list\n'
 	printf '\n  %bPress Enter key%b  =  I got it\n' "$C_LG" "$C_RS"
 fi
 printf '___________________________________________________________________\n'
@@ -1928,7 +1932,7 @@ Check_Files() {
 SC_CKFILES="0"
 # Status code of files: "0" files found, "1" files downloaded or moved, "2" and "3" file and files missing.
 
-if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
+if [ ! -f "$UA_DIR/usbaccelerator.sh" ] || [ ! -f "$UA_DIR/usbstatus.png" ]; then
 	Check_Source
 	if [ "$SC_SETSOURCE" -gt "0" ] && [ -z "$FIRST_TIME" ] && [ "$LANG" = "CN" ]; then
 		Source_GitLab
@@ -1947,12 +1951,12 @@ if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
 		fi
 	else
 		Check_Directories
-		if [ "$CUR_DIR/$S_NAME" != "$UA_DIR/usbaccelerator.sh" ] && [ ! -f $UA_DIR/usbaccelerator.sh ]; then
-			cp -f "$CUR_DIR/$S_NAME" $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
+		if [ "$CUR_DIR/$S_NAME" != "$UA_DIR/usbaccelerator.sh" ] && [ ! -f "$UA_DIR/usbaccelerator.sh" ]; then
+			cp -f "$CUR_DIR/$S_NAME" "$UA_DIR/usbaccelerator.sh" && chmod 755 "$UA_DIR/usbaccelerator.sh"
 			SC_CKFILES="1"
 		fi
 		if [ -s "$CUR_DIR/usbstatus.png" ] && [ ! -s "$UA_DIR/usbstatus.png" ]; then
-			mv -f "$CUR_DIR/usbstatus.png" $UA_DIR/usbstatus.png && chmod 644 $UA_DIR/usbstatus.png
+			mv -f "$CUR_DIR/usbstatus.png" "$UA_DIR/usbstatus.png" && chmod 644 "$UA_DIR/usbstatus.png"
 			SC_CKFILES="1"
 		fi
 	fi
@@ -1962,11 +1966,11 @@ elif [ "$CUR_DIR/$S_NAME" != "$UA_DIR/usbaccelerator.sh" ]; then
 	fi
 fi
 
-if [ ! -f $UA_DIR/usbaccelerator.sh ]; then
+if [ ! -f "$UA_DIR/usbaccelerator.sh" ]; then
 	SC_CKFILES="2"
 fi
 
-if [ ! -f $UA_DIR/usbstatus.png ]; then
+if [ ! -f "$UA_DIR/usbstatus.png" ]; then
 	if [ "$SC_CKFILES" -eq "2" ]; then
 		SC_CKFILES="$((SC_CKFILES + 1))"
 	else
@@ -2094,7 +2098,7 @@ if [ "$(nvram get jffs2_scripts 2>/dev/null)" != "1" ]; then
 		echo '' >> "$UA_DIR/CONFIG"
 		echo 'ENABLE_JFFS_SCRIPTS="1"' >> "$UA_DIR/CONFIG"
 		sed -i '/^$/d' "$UA_DIR/CONFIG"
-		chmod 644 $UA_DIR/CONFIG
+		chmod 644 "$UA_DIR/CONFIG"
 	fi
 fi
 }
@@ -2106,7 +2110,7 @@ if [ -z "$(nvram get script_usbmount 2>/dev/null)" ]; then
 		echo '' >> "$UA_DIR/CONFIG"
 		echo 'ENABLE_MOUNT_SCRIPTS="1"' >> "$UA_DIR/CONFIG"
 		sed -i '/^$/d' "$UA_DIR/CONFIG"
-		chmod 644 $UA_DIR/CONFIG
+		chmod 644 "$UA_DIR/CONFIG"
 	fi
 fi
 }
@@ -2125,7 +2129,7 @@ if [ -n "$(nvram get usb_usb3 2>/dev/null)" ]; then
 			echo '' >> "$UA_DIR/CONFIG"
 			echo 'USB_MODE="3_0"' >> "$UA_DIR/CONFIG"
 			sed -i '/^$/d' "$UA_DIR/CONFIG"
-			chmod 644 $UA_DIR/CONFIG
+			chmod 644 "$UA_DIR/CONFIG"
 		fi
 		SC_USBMODE="2"
 	fi
@@ -2135,8 +2139,8 @@ fi
 }
 
 Clear_Old() {
-if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usbstatus.png ] || [ -f $S_DIR/sfsmb ]; then
-	if [ ! -f $UA_DIR/usbaccelerator.sh ] || [ ! -f $UA_DIR/usbstatus.png ]; then
+if [ -f /jffs/post-mount ] || [ -f "$S_DIR/usbaccelerator.sh" ] || [ -f "$S_DIR/usbstatus.png" ] || [ -f "$S_DIR/sfsmb" ]; then
+	if [ ! -f "$UA_DIR/usbaccelerator.sh" ] || [ ! -f "$UA_DIR/usbstatus.png" ]; then
 		Check_Source
 		if [ "$SC_SETSOURCE" -gt "0" ] && [ "$LANG" = "CN" ]; then
 			Source_GitLab
@@ -2148,10 +2152,10 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 		else
 			Check_Directories
 			if [ "$CUR_DIR/$S_NAME" != "$UA_DIR/usbaccelerator.sh" ]; then
-				mv -f "$CUR_DIR/$S_NAME" $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
+				mv -f "$CUR_DIR/$S_NAME" "$UA_DIR/usbaccelerator.sh" && chmod 755 "$UA_DIR/usbaccelerator.sh"
 			fi
 			if [ -s "$CUR_DIR/usbstatus.png" ] && [ ! -s "$UA_DIR/usbstatus.png" ]; then
-				mv -f "$CUR_DIR/usbstatus.png" $UA_DIR/usbstatus.png && chmod 644 $UA_DIR/usbstatus.png
+				mv -f "$CUR_DIR/usbstatus.png" "$UA_DIR/usbstatus.png" && chmod 644 "$UA_DIR/usbstatus.png"
 			fi
 		fi
 	fi
@@ -2160,27 +2164,27 @@ if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usb
 		nvram set script_usbmount=""
 		nvram commit
 	fi
-	if [ -f $S_DIR/smb.postconf ]; then
+	if [ -f "$S_DIR/smb.postconf" ]; then
 		sed -i '0,/CONFIG/{//d;}' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/sleep 10/d' "$S_DIR/smb.postconf" 2>/dev/null
 		sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
 		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
-			rm -f $S_DIR/smb.postconf
-		elif [ ! -s $S_DIR/smb.postconf.old ]; then
-			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
-		elif [ -s $S_DIR/smb.postconf.old ]; then
-			grep -vf $S_DIR/smb.postconf.old $S_DIR/smb.postconf >> $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
-			rm -f $S_DIR/smb.postconf
+			rm -f "$S_DIR/smb.postconf"
+		elif [ ! -s "$S_DIR/smb.postconf.old" ]; then
+			mv -f "$S_DIR/smb.postconf" "$S_DIR/smb.postconf.old" && chmod 644 "$S_DIR/smb.postconf.old"
+		elif [ -s "$S_DIR/smb.postconf.old" ]; then
+			grep -vf "$S_DIR/smb.postconf.old" "$S_DIR/smb.postconf" >> "$S_DIR/smb.postconf.old" && chmod 644 "$S_DIR/smb.postconf.old"
+			rm -f "$S_DIR/smb.postconf"
 		fi
 	fi
 	if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
 		umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
 	fi
-	rm -f $S_DIR/usbstatus.png $S_DIR/sfsmb
-	rm -f $S_DIR/usbaccelerator.sh
-	sh $UA_DIR/usbaccelerator.sh --enable; exit "$?"
+	rm -f "$S_DIR/usbstatus.png $S_DIR/sfsmb"
+	rm -f "$S_DIR/usbaccelerator.sh"
+	sh "$UA_DIR/usbaccelerator.sh --enable"; exit "$?"
 fi
 }
 
@@ -2189,7 +2193,7 @@ SC_HASH="0"
 # Status code of check hash: "0" same hash, "1" different hash.
 
 if [ -s /tmp/usbstatus.png ]; then
-	if [ -s $UA_DIR/usbstatus.png ]; then
+	if [ -s "$UA_DIR/usbstatus.png" ]; then
 		if [ "$(md5sum $UA_DIR/usbstatus.png | awk '{print $1}')" != "$(md5sum /tmp/usbstatus.png | awk '{print $1}')" ]; then
 			SC_HASH="$((SC_HASH + 1))"
 		else
@@ -2201,7 +2205,7 @@ if [ -s /tmp/usbstatus.png ]; then
 fi
 
 if [ -s /tmp/usbaccelerator.sh ]; then
-	if [ -s $UA_DIR/usbaccelerator.sh ]; then
+	if [ -s "$UA_DIR/usbaccelerator.sh" ]; then
 		if [ "$(md5sum $UA_DIR/usbaccelerator.sh | awk '{print $1}')" != "$(md5sum /tmp/usbaccelerator.sh | awk '{print $1}')" ]; then
 			SC_HASH="$((SC_HASH + 1))"
 		else
@@ -2257,7 +2261,7 @@ Check_Source() {
 SC_SETSOURCE="0"
 # Status code of set source: "0" source has been set, "1" config not found, "2" not found setting in config.
 
-if [ -f $UA_DIR/CONFIG ]; then
+if [ -f "$UA_DIR/CONFIG" ]; then
 	SC_SETSOURCE="2"
 	if [ "$(awk -F'"' '/^CFG_SRC=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "github" ]; then
 		SRC="$SRC_1"
@@ -2289,7 +2293,7 @@ if [ "$(awk -F'"' '/^CFG_SRC=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "gith
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'CFG_SRC="github"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 }
 
@@ -2303,7 +2307,7 @@ if [ "$(awk -F'"' '/^CFG_SRC=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "gitl
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'CFG_SRC="gitlab"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 }
 
@@ -2370,7 +2374,7 @@ if [ "$DL_MODE" = "wget_norm" ]; then
 	opts="-q --tries=3 --timeout=3 $cacrt -O"
 
 	if [ "$CUR_DIR/$S_NAME" != "/tmp/usbaccelerator.sh" ]; then
-		wget $opts "/tmp/usbaccelerator.sh" "$SRC/usbaccelerator.sh"
+		wget "$opts" "/tmp/usbaccelerator.sh" "$SRC/usbaccelerator.sh"
 		if [ "$?" -gt "0" ]; then
 			rm -f /tmp/usbaccelerator.sh
 			SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
@@ -2379,7 +2383,7 @@ if [ "$DL_MODE" = "wget_norm" ]; then
 		SC_DOWNLOAD="0"
 	fi
 
-	wget $opts "/tmp/usbstatus.png" "$SRC/usbstatus$ICONTYPE.png"
+	wget "$opts" "/tmp/usbstatus.png" "$SRC/usbstatus$ICONTYPE.png"
 	if [ "$?" -gt "0" ]; then
 		rm -f /tmp/usbstatus.png
 		SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
@@ -2396,17 +2400,17 @@ FILE_MOVED="0"
 Check_Directories
 if [ -s /tmp/usbaccelerator.sh ] && [ -z "$DONT_MV_UA" ]; then
 	if [ "$CUR_DIR" = "/tmp" ]; then
-		cp -f /tmp/usbaccelerator.sh $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
+		cp -f "/tmp/usbaccelerator.sh" "$UA_DIR/usbaccelerator.sh" && chmod 755 "$UA_DIR/usbaccelerator.sh"
 		if [ "$?" -eq "0" ]; then FILE_MOVED="$((FILE_MOVED + 1))"; fi
 	else
-		mv -f /tmp/usbaccelerator.sh $UA_DIR/usbaccelerator.sh && chmod 755 $UA_DIR/usbaccelerator.sh
+		mv -f "/tmp/usbaccelerator.sh" "$UA_DIR/usbaccelerator.sh" && chmod 755 "$UA_DIR/usbaccelerator.sh"
 		if [ "$?" -eq "0" ]; then FILE_MOVED="$((FILE_MOVED + 1))"; fi
 	fi
 elif [ -f /tmp/usbaccelerator.sh ]; then rm -f /tmp/usbaccelerator.sh
 fi
 
 if [ -s /tmp/usbstatus.png ] && [ -z "$DONT_MV_ICON" ]; then
-	mv -f /tmp/usbstatus.png $UA_DIR/usbstatus.png && chmod 644 $UA_DIR/usbstatus.png
+	mv -f "/tmp/usbstatus.png" "$UA_DIR/usbstatus.png" && chmod 644 "$UA_DIR/usbstatus.png"
 	if [ "$?" -eq "0" ]; then FILE_MOVED="$((FILE_MOVED + 1))"; fi
 elif [ -f /tmp/usbstatus.png ]; then rm -f /tmp/usbstatus.png
 fi
@@ -2419,7 +2423,7 @@ if [ "$(awk -F'"' '/^LANG=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "CN" ]; 
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'LANG="CN"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 LANG="CN"
 }
@@ -2431,7 +2435,7 @@ if [ "$(awk -F'"' '/^LANG=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "EN" ]; 
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'LANG="EN"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 LANG="EN"
 }
@@ -2490,7 +2494,7 @@ if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
 		echo '' >> "$UA_DIR/CONFIG"
 		echo 'ENABLE_STATUS="1"' >> "$UA_DIR/CONFIG"
 		sed -i '/^$/d' "$UA_DIR/CONFIG"
-		chmod 644 $UA_DIR/CONFIG
+		chmod 644 "$UA_DIR/CONFIG"
 	fi
 fi
 
@@ -2502,7 +2506,7 @@ FORCE="0"
 }
 
 Enable_Merlin() {
-if [ -f $S_DIR/smb.postconf ]; then
+if [ -f "$S_DIR/smb.postconf" ]; then
 	if [ "$(grep -ci accelerator $S_DIR/smb.postconf 2>/dev/null)" != "0" ]; then
 		if [ "$(grep -c "USB_Accelerator_v$VERSION" $S_DIR/smb.postconf 2>/dev/null)" != "1" ]; then
 			sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf"
@@ -2515,38 +2519,38 @@ if [ -f $S_DIR/smb.postconf ]; then
 	fi
 	if [ "$dontchange_smbpostconf" != "1" ]; then
 		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
-			rm -f $S_DIR/smb.postconf
-		elif [ ! -s $S_DIR/smb.postconf.old ]; then
-			mv -f $S_DIR/smb.postconf $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
+			rm -f "$S_DIR/smb.postconf"
+		elif [ ! -s "$S_DIR/smb.postconf.old" ]; then
+			mv -f "$S_DIR/smb.postconf" "$S_DIR/smb.postconf.old" && chmod 644 "$S_DIR/smb.postconf.old"
 			bak_smbpostconf="1"
-		elif [ -s $S_DIR/smb.postconf.old ]; then
-			grep -vf $S_DIR/smb.postconf.old $S_DIR/smb.postconf >> $S_DIR/smb.postconf.old && chmod 644 $S_DIR/smb.postconf.old
-			rm -f $S_DIR/smb.postconf
+		elif [ -s "$S_DIR/smb.postconf.old" ]; then
+			grep -vf "$S_DIR/smb.postconf.old" "$S_DIR/smb.postconf" >> "$S_DIR/smb.postconf.old" && chmod 644 "$S_DIR/smb.postconf.old"
+			rm -f "$S_DIR/smb.postconf"
 			bak_smbpostconf="1"
 		fi
 		FORCE_ENABLE="1"
 	fi
 fi
 
-if [ ! -f $S_DIR/smb.postconf ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1" ]; then
+if [ ! -f "$S_DIR/smb.postconf" ] || [ "$FORCE" = "1" ] || [ "$FORCE_ENABLE" = "1" ]; then
 	FORCE_ENABLE="0"
-	echo '#!/bin/sh' > $S_DIR/smb.postconf
-	echo "# USB_Accelerator_v$VERSION" >> $S_DIR/smb.postconf
-	echo 'CONFIG=$1' >> $S_DIR/smb.postconf
-	echo 'sed -i "/deadtime/d;/strict locking/d;/[aA]ccelerator/d" "$CONFIG"' >> $S_DIR/smb.postconf
-	echo 'sed -i "/global/a\deadtime = 10" "$CONFIG"' >> $S_DIR/smb.postconf
-	echo 'sed -i "/global/a\strict locking = no" "$CONFIG"' >> $S_DIR/smb.postconf
-	echo 'sed -i "s/socket options.*/socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE/g" "$CONFIG"' >> $S_DIR/smb.postconf
-	echo "echo '# USB_Accelerator_v$VERSION'"' >> "$CONFIG"' >> $S_DIR/smb.postconf
-	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> $S_DIR/smb.postconf
+	echo '#!/bin/sh' > "$S_DIR/smb.postconf"
+	echo "# USB_Accelerator_v$VERSION" >> "$S_DIR/smb.postconf"
+	echo 'CONFIG=$1' >> "$S_DIR/smb.postconf"
+	echo 'sed -i "/deadtime/d;/strict locking/d;/socket options/d;/[aA]ccelerator/d" "$CONFIG"' >> "$S_DIR/smb.postconf"
+	echo 'sed -i "/global/a\socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE" "$CONFIG"' >> "$S_DIR/smb.postconf"
+	echo 'sed -i "/global/a\strict locking = no" "$CONFIG"' >> "$S_DIR/smb.postconf"
+	echo 'sed -i "/global/a\deadtime = 10" "$CONFIG"' >> "$S_DIR/smb.postconf"
+	echo "echo '# USB_Accelerator_v$VERSION'"' >> "$CONFIG"' >> "$S_DIR/smb.postconf"
+	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> "$S_DIR/smb.postconf"
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
 		KEEP_UPDATE="0"
 	fi
 	if [ "$bak_smbpostconf" = "1" ]; then
-		grep -v '#' $S_DIR/smb.postconf.old | sed '/CONFIG=$1/d;/socket options/d;/deadtime/d;/strict locking/d;/[aA]ccelerator/d;/^$/d' >> $S_DIR/smb.postconf
+		grep -v '#' "$S_DIR/smb.postconf.old" | sed '/CONFIG=$1/d;/socket options/d;/deadtime/d;/strict locking/d;/[aA]ccelerator/d;/^$/d' >> "$S_DIR/smb.postconf"
 	fi
-	chmod 755 $S_DIR/smb.postconf
+	chmod 755 "$S_DIR/smb.postconf"
 	service restart_nasapps >/dev/null 2>&1
 fi
 
@@ -2573,7 +2577,7 @@ if [ "$(awk -F'"' '/^ENABLE_MODE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'ENABLE_MODE="M"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 }
 
@@ -2591,11 +2595,11 @@ if [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)" 
 		sleep 1
 	done
 	if [ -s /etc/smb.conf ]; then
-		sed -i '/deadtime/d;/strict locking/d' "/etc/smb.conf" 2>/dev/null
+		sed -i '/deadtime/d;/strict locking/d;/socket options/d' "/etc/smb.conf" 2>/dev/null
 		sed -i '/[aA]ccelerator/d' "/etc/smb.conf" 2>/dev/null
-		sed -i 's/socket options.*/socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE/g' "/etc/smb.conf" 2>/dev/null
-		sed -i '/global/a\deadtime = 10' "/etc/smb.conf" 2>/dev/null
+		sed -i '/global/a\socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE' "/etc/smb.conf" 2>/dev/null
 		sed -i '/global/a\strict locking = no' "/etc/smb.conf" 2>/dev/null
+		sed -i '/global/a\deadtime = 10' "/etc/smb.conf" 2>/dev/null
 		echo "# USB_Accelerator_v$VERSION" >> /etc/smb.conf
 		if [ "$(ps 2>/dev/null | grep smbd | grep -vc grep)" -gt "0" ]; then
 			killall -q smbd
@@ -2611,33 +2615,33 @@ elif [ "$(grep -i "USB_Accelerator_v$VERSION" /etc/smb.conf 2>/dev/null | wc -l)
 	SC_ENABLE="100"
 fi
 
-if [ ! -f $S_DIR/post-mount ] || [ "$(grep -i "USB_Accelerator_v$VERSION" $S_DIR/post-mount 2>/dev/null | wc -l)" -eq "0" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/post-mount 2>/dev/null | wc -l)" -eq "0" ] || [ "$FORCE" = "1" ]; then
-	if [ -f $S_DIR/post-mount ]; then
+if [ ! -f "$S_DIR/post-mount" ] || [ "$(grep -i "USB_Accelerator_v$VERSION" $S_DIR/post-mount 2>/dev/null | wc -l)" -eq "0" ] || [ "$(grep -i "sh $UA_DIR/usbaccelerator.sh --enable" $S_DIR/post-mount 2>/dev/null | wc -l)" -eq "0" ] || [ "$FORCE" = "1" ]; then
+	if [ -f "$S_DIR/post-mount" ]; then
 		sed -i '/[aA]ccelerator/d' "$S_DIR/post-mount" 2>/dev/null
 		sed -i '/^$/d' "$S_DIR/post-mount" 2>/dev/null
 		if [ "$(wc -l "$S_DIR/post-mount" 2>/dev/null | awk '{print $1}')" -le "1" ] || [ "$(grep -vc '#' "$S_DIR/post-mount")" -eq "0" ]; then
-			rm -f $S_DIR/post-mount
+			rm -f "$S_DIR/post-mount"
 		else
-			mv -f $S_DIR/post-mount	$S_DIR/post-mount.old && chmod 644 $S_DIR/post-mount.old
+			mv -f "$S_DIR/post-mount" "$S_DIR/post-mount.old" && chmod 644 "$S_DIR/post-mount.old"
 			bak_postmount="1"
 		fi
 	fi
-	echo '#!/bin/sh' > $S_DIR/post-mount
-	echo "# USB_Accelerator_v$VERSION" >> $S_DIR/post-mount
-	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> $S_DIR/post-mount
+	echo '#!/bin/sh' > "$S_DIR/post-mount"
+	echo "# USB_Accelerator_v$VERSION" >> "$S_DIR/post-mount"
+	echo "sh $UA_DIR/usbaccelerator.sh --enable" >> "$S_DIR/post-mount"
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
 		KEEP_UPDATE="0"
 	fi
 	if [ -n "$(nvram get script_usbmount 2>/dev/null)" ] && [ "$(nvram get script_usbmount)" != "$S_DIR/post-mount" ] && [ "$(nvram get script_usbmount)" != "/jffs/post-mount" ]; then
-		echo "$(nvram get script_usbmount)" >> $S_DIR/post-mount
+		echo "$(nvram get script_usbmount)" >> "$S_DIR/post-mount"
 	else
 		Check_Mount_Script
 	fi
-	if [ "$bak_postmount" = "1" ] && [ -s $S_DIR/post-mount.old ]; then
-		grep -v '#' $S_DIR/post-mount.old | sed '/^$/d' >> $S_DIR/post-mount
+	if [ "$bak_postmount" = "1" ] && [ -s "$S_DIR/post-mount.old" ]; then
+		grep -v '#' "$S_DIR/post-mount.old" | sed '/^$/d' >> "$S_DIR/post-mount"
 	fi
-	chmod 755 $S_DIR/post-mount
+	chmod 755 "$S_DIR/post-mount"
 	nvram set script_usbmount="$S_DIR/post-mount"
 	nvram commit
 fi
@@ -2647,18 +2651,18 @@ if [ "$(awk -F'"' '/^ENABLE_MODE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'ENABLE_MODE="S"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 }
 
 Enable_Notifications() {
 if [ "$SC_ENABLE" -eq "0" ] || [ "$SC_ENABLE" -eq "100" ]; then
-	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ] && [ -s $UA_DIR/usbstatus.png ]; then
+	if [ "$(df -h | grep -c 'usbstatus.png')" = "0" ] && [ -s "$UA_DIR/usbstatus.png" ]; then
 		if [ ! -d /tmp/usbaccelerator ]; then
 			mkdir -m 755 /tmp/usbaccelerator
 		fi
 		if [ ! -s /tmp/usbaccelerator/usbstatus.png ]; then
-			cp -f $UA_DIR/usbstatus.png /tmp/usbaccelerator/usbstatus.png && chmod 644 /tmp/usbaccelerator/usbstatus.png
+			cp -f "$UA_DIR/usbstatus.png" "/tmp/usbaccelerator/usbstatus.png" && chmod 644 "/tmp/usbaccelerator/usbstatus.png"
 		fi
 		mount --bind /tmp/usbaccelerator/usbstatus.png /www/images/New_ui/usbstatus.png
 	fi
@@ -2740,7 +2744,7 @@ if [ "$(awk -F'"' '/^ENABLE_STATUS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" !=
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'ENABLE_STATUS="0"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 
 if [ "$QUIET" != "1" ]; then
@@ -2783,16 +2787,16 @@ FORCE="0"
 }
 
 Disable_Merlin() {
-if [ -f $S_DIR/smb.postconf ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postconf 2>/dev/null | wc -l)" -gt "0" ] || [ "$FORCE" = "1" ]; then
+if [ -f "$S_DIR/smb.postconf" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/smb.postconf 2>/dev/null | wc -l)" -gt "0" ] || [ "$FORCE" = "1" ]; then
 	sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
 	fi
-	if [ -f $S_DIR/smb.postconf ]; then
+	if [ -f "$S_DIR/smb.postconf" ]; then
 		if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
-			rm -f $S_DIR/smb.postconf
+			rm -f "$S_DIR/smb.postconf"
 		fi
 	fi
 	if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
@@ -2809,15 +2813,15 @@ fi
 }
 
 Disable_Stock() {
-if [ -f $S_DIR/post-mount ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 2>/dev/null | wc -l)" -gt "0" ] || [ "$FORCE" = "1" ]; then
+if [ -f "$S_DIR/post-mount" ] && [ "$(grep -i "USB_Accelerator" $S_DIR/post-mount 2>/dev/null | wc -l)" -gt "0" ] || [ "$FORCE" = "1" ]; then
 	sed -i '/[aA]ccelerator/d' "$S_DIR/post-mount" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/post-mount" 2>/dev/null
 	if [ "$KEEP_UPDATE" = "1" ]; then
 		Enable_Auto_Update
 	fi
-	if [ -f $S_DIR/post-mount ]; then
+	if [ -f "$S_DIR/post-mount" ]; then
 		if [ "$(wc -l "$S_DIR/post-mount" 2>/dev/null | awk '{print $1}')" -le "1" ] || [ "$(grep -vc '#' "$S_DIR/post-mount")" -eq "0" ]; then
-			rm -f $S_DIR/post-mount
+			rm -f "$S_DIR/post-mount"
 			nvram set script_usbmount=""
 			nvram commit
 		fi
@@ -2843,31 +2847,33 @@ if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
 	umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
 fi
 
-if [ -f $S_DIR/smb.postconf ]; then
+if [ -f "$S_DIR/smb.postconf" ]; then
 	sed -i '0,/CONFIG/{//d;}' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/socket options/d;/deadtime/d;/strict locking/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/[aA]ccelerator/d' "$S_DIR/smb.postconf" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/smb.postconf" 2>/dev/null
 	if [ "$(grep -vc '#' "$S_DIR/smb.postconf")" -le "1" ] && [ "$(grep -vc 'CONFIG=$1' "$S_DIR/smb.postconf")" -le "1" ]; then
-		rm -f $S_DIR/smb.postconf
-	fi
-	if [ "$(awk -F'"' '/^ENABLE_JFFS_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
-		nvram set jffs2_scripts="0"
-		nvram commit
+		rm -f "$S_DIR/smb.postconf"
 	fi
 fi
 
-if [ -f $S_DIR/post-mount ]; then
+if [ "$(awk -F'"' '/^ENABLE_JFFS_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
+	nvram set jffs2_scripts="0"
+	nvram commit
+fi
+
+if [ -f "$S_DIR/post-mount" ]; then
 	sed -i '/[aA]ccelerator/d' "$S_DIR/post-mount" 2>/dev/null
 	sed -i '/^$/d' "$S_DIR/post-mount" 2>/dev/null
 	if [ "$(wc -l "$S_DIR/post-mount" 2>/dev/null | awk '{print $1}')" -le "1" ] || [ "$(grep -vc '#' "$S_DIR/post-mount" 2>/dev/null )" -eq "0" ]; then
-		rm -f $S_DIR/post-mount
-	fi
-	if [ "$(awk -F'"' '/^ENABLE_MOUNT_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
-		nvram set script_usbmount=""
-		nvram commit
+		rm -f "$S_DIR/post-mount"
 	fi
 elif [ "$(nvram get script_usbmount 2>/dev/null | grep -c post-mount)" -gt "0" ]; then
+	nvram set script_usbmount=""
+	nvram commit
+fi
+
+if [ "$(awk -F'"' '/^ENABLE_MOUNT_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 	nvram set script_usbmount=""
 	nvram commit
 fi
@@ -2876,8 +2882,8 @@ if [ "$(cru l 2>/dev/null | grep -c 'USB_Accelerator_AutoUpdate')" -gt "0" ]; th
 	cru d USB_Accelerator_AutoUpdate 2>/dev/null
 fi
 
-if [ -f /jffs/post-mount ] || [ -f $S_DIR/usbaccelerator.sh ] || [ -f $S_DIR/usbstatus.png ] || [ -f $S_DIR/sfsmb ]; then
-	rm -f $S_DIR/usbstatus.png $S_DIR/sfsmb /jffs/post-mount $S_DIR/usbaccelerator.sh
+if [ -f "/jffs/post-mount" ] || [ -f "$S_DIR/usbaccelerator.sh" ] || [ -f "$S_DIR/usbstatus.png" ] || [ -f "$S_DIR/sfsmb" ]; then
+	rm -f "$S_DIR/usbstatus.png" "$S_DIR/sfsmb" "/jffs/post-mount" "$S_DIR/usbaccelerator.sh"
 fi
 
 if [ -d "$UA_DIR" ] || [ "$FORCE" = "1" ]; then
@@ -2894,19 +2900,23 @@ if [ -d "$UA_DIR" ] || [ "$FORCE" = "1" ]; then
 fi
 
 TMP_CLEARED="0"
-if [ "$CUR_DIR" = "/tmp" ] && [ -f /tmp/$S_NAME ]; then
+if [ "$CUR_DIR" = "/tmp" ] && [ -f "/tmp/$S_NAME" ]; then
 	rm -f "$CUR_DIR/usbstatus.png"
 	rm -f "$CUR_DIR/$S_NAME"
-	if [ ! -f /tmp/$S_NAME ]; then TMP_CLEARED="$((TMP_CLEARED + 1))"; fi
+	if [ ! -f "/tmp/$S_NAME" ]; then TMP_CLEARED="$((TMP_CLEARED + 1))"; fi
 fi
 
-if [ -f $UA_DIR/usbstatus.png ]; then
+if [ -f "$CUR_DIR/$S_NAME" ] || [ -f "$CUR_DIR/usbstatus.png" ]; then
+	rm -f "$CUR_DIR/$S_NAME" "$CUR_DIR/usbstatus.png"
+fi
+
+if [ -f "$UA_DIR/usbstatus.png" ]; then
 	SC_UNINSTALL="$((SC_UNINSTALL + 1))"
 fi
-if [ -f $UA_DIR/CONFIG ]; then
+if [ -f "$UA_DIR/CONFIG" ]; then
 	SC_UNINSTALL="$((SC_UNINSTALL + 1))"
 fi
-if [ -f $UA_DIR/usbaccelerator.sh ]; then
+if [ -f "$UA_DIR/usbaccelerator.sh" ]; then
 	SC_UNINSTALL="$((SC_UNINSTALL + 1))"
 fi
 if [ -d "$UA_DIR" ]; then
@@ -2917,12 +2927,12 @@ if [ "$SC_UNINSTALL" -gt "0" ]; then
 	SC_GLOBAL="8"
 fi
 
-if [ -f $S_DIR/smb.postconf.old ] && [ ! -f $S_DIR/smb.postconf ]; then
-	mv -f $S_DIR/smb.postconf.old $S_DIR/smb.postconf && chmod 755 $S_DIR/smb.postconf
+if [ -f "$S_DIR/smb.postconf.old" ] && [ ! -f "$S_DIR/smb.postconf" ]; then
+	mv -f "$S_DIR/smb.postconf.old" "$S_DIR/smb.postconf" && chmod 755 "$S_DIR/smb.postconf"
 fi
 
-if [ -f $S_DIR/post-mount.old ] && [ ! -f $S_DIR/post-mount ]; then
-	mv -f $S_DIR/post-mount.old $S_DIR/post-mount && chmod 755 $S_DIR/post-mount
+if [ -f "$S_DIR/post-mount.old" ] && [ ! -f "$S_DIR/post-mount" ]; then
+	mv -f "$S_DIR/post-mount.old" "$S_DIR/post-mount" && chmod 755 "$S_DIR/post-mount"
 fi
 
 if [ "$QUIET" != "1" ]; then
@@ -2949,7 +2959,7 @@ SC_REINSTALL="0"
 
 Check_Network
 if [ "$SC_NETWORK" -eq "0" ] || [ "$FORCE" = "1" ]; then
-	if [ -s $UA_DIR/CONFIG ] && [ "$CLEAN_INSTALL" = "1" ]; then
+	if [ -s "$UA_DIR/CONFIG" ] && [ "$CLEAN_INSTALL" = "1" ]; then
 		if [ "$(awk -F'"' '/^ENABLE_JFFS_SCRIPTS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 			nvram set jffs2_scripts="0"
 			nvram commit
@@ -2959,11 +2969,11 @@ if [ "$SC_NETWORK" -eq "0" ] || [ "$FORCE" = "1" ]; then
 			nvram commit
 		fi
 	fi
-	if [ -s $UA_DIR/CONFIG ] && [ "$CLEAN_INSTALL" != "1" ]; then
+	if [ -s "$UA_DIR/CONFIG" ] && [ "$CLEAN_INSTALL" != "1" ]; then
 		if [ "$(awk -F'"' '/^ENABLE_STATUS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
 			need_to_reenable="1"
 		fi
-		cp -f $UA_DIR/CONFIG /tmp/UA.CONFIG.BAK
+		cp -f "$UA_DIR/CONFIG" "/tmp/UA.CONFIG.BAK"
 		chmod 644 /tmp/UA.CONFIG.BAK
 	fi
 	Download_Files
@@ -2971,8 +2981,8 @@ if [ "$SC_NETWORK" -eq "0" ] || [ "$FORCE" = "1" ]; then
 		Uninstall
 		Move_Files
 		if [ -s /tmp/UA.CONFIG.BAK ]; then
-			mv -f /tmp/UA.CONFIG.BAK $UA_DIR/CONFIG
-			chmod 644 $UA_DIR/CONFIG
+			mv -f "/tmp/UA.CONFIG.BAK" "$UA_DIR/CONFIG"
+			chmod 644 "$UA_DIR/CONFIG"
 		fi
 	else
 		if [ -s /tmp/UA.CONFIG.BAK ]; then
@@ -2980,7 +2990,7 @@ if [ "$SC_NETWORK" -eq "0" ] || [ "$FORCE" = "1" ]; then
 		fi
 		SC_REINSTALL="1000"
 	fi
-	if [ ! -f $UA_DIR/usbstatus.png ] || [ ! -f $UA_DIR/usbaccelerator.sh ]; then
+	if [ ! -f "$UA_DIR/usbstatus.png" ] || [ ! -f "$UA_DIR/usbaccelerator.sh" ]; then
 		SC_REINSTALL="$((SC_REINSTALL + 1))"
 	fi
 else
@@ -3044,7 +3054,7 @@ if [ "$QUIET" != "1" ]; then
 fi
 
 if [ "$TRIG_RI_BY_USER" != "1" ] && [ "$need_to_reenable" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
-	sh $UA_DIR/usbaccelerator.sh --enable; exit "$?"
+	sh "$UA_DIR/usbaccelerator.sh --enable"; exit "$?"
 elif [ "$TRIG_RI_BY_USER" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
 	if [ "$need_to_reenable" = "1" ]; then
 		sed -i '/ENABLE_STATUS/d' "$UA_DIR/CONFIG" 2>/dev/null
@@ -3054,7 +3064,7 @@ elif [ "$TRIG_RI_BY_USER" = "1" ] && [ "$SC_REINSTALL" -eq "0" ]; then
 	else
 		printf 'USB Accelerator reinstalled successfully, reloading...\n'
 	fi
-	sh $UA_DIR/usbaccelerator.sh; exit "$?"
+	sh "$UA_DIR/usbaccelerator.sh"; exit "$?"
 fi
 }
 
@@ -3126,10 +3136,10 @@ if [ "$SC_UPDATE" -eq "1" ]; then
 	echo '' >> "$UA_DIR/CONFIG"
 	echo "UPDATE_COMPLETED=\"$TIMESTAMP\"" >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 	if [ "$(awk -F'"' '/^ENABLE_STATUS=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1" ]; then
-		sh $UA_DIR/usbaccelerator.sh --quiet --disable
-		sh $UA_DIR/usbaccelerator.sh --enable; SC_GLOBAL="$?"
+		sh "$UA_DIR/usbaccelerator.sh --quiet --disable"
+		sh "$UA_DIR/usbaccelerator.sh --enable"; SC_GLOBAL="$?"
 	fi
 fi
 
@@ -3200,7 +3210,7 @@ if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" != "
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'AUTO_UPDATE="1"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 
 Check_Firmware
@@ -3212,7 +3222,7 @@ if [ "$FWTYPE" = "380S" ] || [ "$FWTYPE" = "384S" ]; then
 fi
 
 if [ "$(grep 'usbaccelerator.sh --update' $smb_config 2>/dev/null | wc -l)" -eq "0" ] || [ "$(grep 'usbaccelerator.sh -u' $smb_config 2>/dev/null | wc -l)" -eq "0" ]; then
-	if [ ! -f $smb_config ]; then
+	if [ ! -f "$smb_config" ]; then
 		echo '#!/bin/sh' > "$smb_config"
 	fi
 	echo '' >> "$smb_config"
@@ -3244,7 +3254,7 @@ if [ "$(awk -F'"' '/^AUTO_UPDATE=/ {print $2}' $UA_DIR/CONFIG 2>/dev/null)" = "1
 	echo '' >> "$UA_DIR/CONFIG"
 	echo 'AUTO_UPDATE="0"' >> "$UA_DIR/CONFIG"
 	sed -i '/^$/d' "$UA_DIR/CONFIG"
-	chmod 644 $UA_DIR/CONFIG
+	chmod 644 "$UA_DIR/CONFIG"
 fi
 
 Check_Firmware
