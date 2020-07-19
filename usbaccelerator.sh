@@ -2374,7 +2374,7 @@ if [ "$DL_MODE" = "wget_norm" ]; then
 	opts="-q --tries=3 --timeout=3 $cacrt -O"
 
 	if [ "$CUR_DIR/$S_NAME" != "/tmp/usbaccelerator.sh" ]; then
-		wget "$opts" "/tmp/usbaccelerator.sh" "$SRC/usbaccelerator.sh"
+		wget $opts "/tmp/usbaccelerator.sh" "$SRC/usbaccelerator.sh"
 		if [ "$?" -gt "0" ]; then
 			rm -f /tmp/usbaccelerator.sh
 			SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
@@ -2383,7 +2383,7 @@ if [ "$DL_MODE" = "wget_norm" ]; then
 		SC_DOWNLOAD="0"
 	fi
 
-	wget "$opts" "/tmp/usbstatus.png" "$SRC/usbstatus$ICONTYPE.png"
+	wget $opts "/tmp/usbstatus.png" "$SRC/usbstatus$ICONTYPE.png"
 	if [ "$?" -gt "0" ]; then
 		rm -f /tmp/usbstatus.png
 		SC_DOWNLOAD="$((SC_DOWNLOAD + 1))"
