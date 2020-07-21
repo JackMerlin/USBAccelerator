@@ -2,7 +2,7 @@
 
 ###################################################################
 ######                USB Accelerator by Jack                ######
-######                     Version 2.0.1                     ######
+######                     Version 2.0.2                     ######
 ######                                                       ######
 ######     https://github.com/JackMerlin/USBAccelerator      ######
 ######                                                       ######
@@ -12,7 +12,7 @@ PARM_1="$1"
 PARM_2="$2"
 PARM_3="$3"
 export PATH="/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
-VERSION="2.0.1"
+VERSION="2.0.2"
 RELEASE_TYPE="stable"
 S_DIR="/jffs/scripts"
 ADD_DIR="/jffs/addons"
@@ -2182,7 +2182,7 @@ if [ -f /jffs/post-mount ] || [ -f "$S_DIR/usbaccelerator.sh" ] || [ -f "$S_DIR/
 	if [ "$(df -h | grep -c 'usbstatus.png')" -gt "0" ]; then
 		umount -f /www/images/New_ui/usbstatus.png 2>/dev/null
 	fi
-	rm -f "$S_DIR/usbstatus.png $S_DIR/sfsmb"
+	rm -f "$S_DIR/usbstatus.png" "$S_DIR/sfsmb"
 	rm -f "$S_DIR/usbaccelerator.sh"
 	sh "$UA_DIR/usbaccelerator.sh --enable"; exit "$?"
 fi
