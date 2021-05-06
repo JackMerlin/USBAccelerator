@@ -71,7 +71,7 @@ If you think your firmware supports it, please use the following command to inst
 ```
 
 ### Where should I report issues?
-Only on GitHub.
+End-of-life, technical support is no longer provided.
 
 ### Why is there no speed increase in the FTP?
 It should only work in the SMB protocol.
