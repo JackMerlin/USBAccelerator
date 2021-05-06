@@ -54,7 +54,7 @@ sh <PATH>/usbaccelerator.sh --quiet --update
 USB Accelerator will not send any data, but it needs to be downloaded and updated from GitHub or GitLab. Please read their terms and privacy policy in detail before using GitHub or GitLab.
 
 ## Feedback
-You can feedback in the [GitHub](https://github.com/JackMerlin/USBAccelerator/issues) and help me make it better.
+End-of-life, technical support is no longer provided.
 
 ## FAQs
 ### When will the USB Accelerator run?
